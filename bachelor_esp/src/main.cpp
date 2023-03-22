@@ -61,7 +61,7 @@ void loop() {
   prevRead[0] = reading;
   //Serial.println(prevRead[0]);
 
-  if (prevRead[0] != 0) { //  && prevRead[1] && prevRead[2] && prevRead[3] && prevRead[4] && prevRead[5] && prevRead[6] && prevRead[7] && prevRead[8] && prevRead[9] && prevRead[10]
+  if (prevRead[0]  != 0) { //  && prevRead[1] && prevRead[2] && prevRead[3] && prevRead[4] && prevRead[5] && prevRead[6] && prevRead[7] && prevRead[8] && prevRead[9] && prevRead[10]
     proper = true;
     //Serial.println(reading);
   }
@@ -146,7 +146,7 @@ void loop() {
 
 
   }
-  delay(25);
+  delay(1);
   
 
 }
