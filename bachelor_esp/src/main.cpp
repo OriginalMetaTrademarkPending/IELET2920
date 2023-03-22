@@ -2,20 +2,31 @@
 #include <TFT_eSPI.h>
 #include <SPI.h>
 
-
+//screen setup and naming
 TFT_eSPI tft = TFT_eSPI();
 
+// Sensorpin
 const int pin = 32;
 
+// Sensor value
 int reading;
+
+// Sensorvalues for filtering
 int prevRead[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+// Not zero sensor
 int proper;
+
+// kg/newton converter
 float kg = 0;
 
+// timeline of measurments
 int pixels[241];
 
+// graph mode or newton mode
 bool graphing = true;
 
+// TTGO builtin buttons
 int button1Pin = 0;
 int button2Pin = 35;
 
@@ -23,13 +34,14 @@ int button2Pin = 35;
 
 void setup() {
   // put your setup code here, to run once:
+  // Screen startup
   tft.init();
   tft.setRotation(3);
   tft.invertDisplay(true);
   tft.fillScreen(TFT_BLACK);
 
   pinMode(pin, INPUT);
-  Serial.begin(115200);
+  //Serial.begin(115200);
 
   pinMode(button1Pin, INPUT_PULLUP);
   pinMode(button2Pin, INPUT_PULLUP);
@@ -39,11 +51,12 @@ void loop() {
   // put your main code here, to run repeatedly:
   reading = analogRead(pin);
 
-  // clear display
+  // clear display if last reading was not zero, and is now zero
   if (proper && reading == 0) {
     tft.fillScreen(TFT_BLACK);
   }
 
+  // Change between graphing display or Newton display
   if (digitalRead(button1Pin) == 0 || digitalRead(button2Pin) == 0)  {
       delay(500);
       graphing = !graphing;
@@ -59,26 +72,26 @@ void loop() {
     //Serial.print(",  ");
   }
   prevRead[0] = reading;
-  //Serial.println(prevRead[0]);
 
+  // add more of the commented statements to compensate for noisy zero readings
   if (prevRead[0]  != 0) { //  && prevRead[1] && prevRead[2] && prevRead[3] && prevRead[4] && prevRead[5] && prevRead[6] && prevRead[7] && prevRead[8] && prevRead[9] && prevRead[10]
     proper = true;
-    //Serial.println(reading);
   }
   else{
     proper = false;
-    //Serial.println(0);
   }
+
 
   // tft display
   tft.setTextSize(5);
   tft.setTextColor(TFT_WHITE,TFT_BLACK);
+
+  // Newton display
   if (graphing)  {
-    //    flicker protection
     kg = (reading*500);
     kg = kg/4095;
     if (proper) {
-      
+      //    flicker protection
       if (prevRead[1] >= 1000 && prevRead[0] < 1000)  {
         tft.fillScreen(TFT_BLACK);
         tft.drawFloat(kg,2,10,5);
@@ -105,9 +118,9 @@ void loop() {
   }
   
   
-  // bar graf
+  // grafing
   else {
-    // moving the pixels through the array
+    // current -> previous
     for (int i = 240; i >= 1; i--)  {
       pixels[i] = pixels[i-1];
     }
@@ -123,7 +136,8 @@ void loop() {
       tft.drawLine(i,pixels[i],i,pixels[i+1],TFT_GREENYELLOW);
     }
 
-    // blacking out the rest of the display without flickering
+    // not using fillscreen to avoid flickering
+    // blacking out the rest of the display to avoid flickering
     for (int i = 0; i < 240; i++)  {
       if (pixels[i] < pixels[i+1])  {
         tft.drawLine(i,0,i,pixels[i]-2,TFT_BLACK);
@@ -134,17 +148,6 @@ void loop() {
         tft.drawLine(i,134,i,pixels[i]+1,TFT_BLACK);
       }
     }
-    /*
-    if (pixels[0] == 0) {
-      for (int i = 0; i < 20; i++)  {
-      Serial.print(pixels[0]);
-      Serial.print(",");
-      }
-      Serial.println(pixels[20]);
-    }
-    */
-
-
   }
   delay(1);
   
