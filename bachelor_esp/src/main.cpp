@@ -22,13 +22,80 @@ float kg = 0;
 
 // timeline of measurments
 int pixels[241];
+int i = 0;
 
 // graph mode or newton mode
-bool graphing = true;
+bool graphing = false;
 
 // TTGO builtin buttons
 int button1Pin = 0;
 int button2Pin = 35;
+
+const int scales[3] = {130, 2000, 4095};
+
+int picker = 0;
+
+
+// Kalman testing
+float change = 0.;            // expected change between each measurment (model)
+float process_var = 1.;       // variance for process model
+float measurment_std = 4.;    // standard deviation in measurments
+int measurment;
+
+float prior[2];
+float x[] = {0.,100.}; // inital state
+
+float process_model[] = {change,process_var};
+float gaus_mes[] = {float(reading),measurment_std*measurment_std};
+
+
+
+float update(float prior[2], float measurment[2], bool returner)  {
+  float x = prior[0];         // mean and variance of prior
+  float P = prior[1];
+
+  float z = measurment[0];    // mean and variance of measurment
+  float R = measurment[1];    
+
+  float y = z - x;            // residual
+  float K = P / (P + R);      // Kalman gain
+
+  x = x + K*y;                // posterior
+  P = (1-K) * P;              // posterior variance
+
+  float gaus;
+
+  if (returner) {
+    gaus = x;
+  }
+  else{
+    gaus = P;
+  }
+  
+  return gaus;
+}
+
+float predict(float posterior[2], float movement[2], bool returner)  {
+  float x = posterior[0];     // mean and variance of posterior
+  float P = posterior[1];
+
+  float dx = movement[0];     // mean and variance of movement
+  float Q = movement[1];
+
+  x = x + dx;
+  P = P + Q;
+
+  float gaus;
+
+  if (returner) {
+    gaus = x;
+  }
+  else{
+    gaus = P;
+  }
+  
+  return gaus;
+}
 
 
 
@@ -45,6 +112,11 @@ void setup() {
 
   pinMode(button1Pin, INPUT_PULLUP);
   pinMode(button2Pin, INPUT_PULLUP);
+
+
+  // square process var
+  process_var = process_var * process_var;
+  float process_model[2] = {change,process_var};
 }
 
 void loop() {
@@ -52,12 +124,12 @@ void loop() {
   reading = analogRead(pin);
 
   // clear display if last reading was not zero, and is now zero
-  if (proper && reading == 0) {
+  if (proper && reading == 0 && graphing) {
     tft.fillScreen(TFT_BLACK);
   }
 
   // Change between graphing display or Newton display
-  if (digitalRead(button1Pin) == 0 || digitalRead(button2Pin) == 0)  {
+  if (digitalRead(button1Pin) == 0)  {
       delay(500);
       graphing = !graphing;
       Serial.println(graphing);
@@ -80,7 +152,18 @@ void loop() {
   else{
     proper = false;
   }
+  
+  // kalman try
+  gaus_mes[0] = float(reading);
 
+  prior[0] = predict(x,process_model,true);
+  prior[1] = predict(x,process_model,false);
+  x[0] = update(prior,gaus_mes,true);
+  x[1] = update(prior,gaus_mes,false);
+  
+  measurment = int(round(x[0]));
+
+  
 
   // tft display
   tft.setTextSize(5);
@@ -120,36 +203,39 @@ void loop() {
   
   // grafing
   else {
-    // current -> previous
-    for (int i = 240; i >= 1; i--)  {
-      pixels[i] = pixels[i-1];
-    }
-    if (proper) {
-      pixels[0] = map(reading, 0, 2000,130,1);
-    }
-    else  {
-      pixels[0] = 130;
-    }
-
-    // plotting the green line
-    for (int i = 0; i < 240; i++)  {
-      tft.drawLine(i,pixels[i],i,pixels[i+1],TFT_GREENYELLOW);
-    }
-
-    // not using fillscreen to avoid flickering
-    // blacking out the rest of the display to avoid flickering
-    for (int i = 0; i < 240; i++)  {
-      if (pixels[i] < pixels[i+1])  {
-        tft.drawLine(i,0,i,pixels[i]-2,TFT_BLACK);
-        tft.drawLine(i,134,i,pixels[i+1]+1,TFT_BLACK);
-      }
-      else{
-        tft.drawLine(i,0,i,pixels[i+1]-1,TFT_BLACK);
-        tft.drawLine(i,134,i,pixels[i]+1,TFT_BLACK);
+    if (digitalRead(button2Pin) == 0) {
+      picker++;
+      while (digitalRead(button2Pin) == 0)  {}
+      i = 0;
+      tft.fillScreen(TFT_BLACK);
+      if (picker >= 3) {
+        picker = 0;
       }
     }
+    tft.setTextSize(1);
+    i++;
+    if (i > 241)  {
+      i = 0;
+      tft.fillScreen(TFT_BLACK);
+    }
+    //tft.drawString("current timer: " + String(i),0,0);
+    tft.drawString("Scale: " + String(scales[picker]),155,0);
+    tft.fillCircle(145,15,2,TFT_RED);
+    tft.drawString("reading: " + String(reading) + "                ",150,10);
+    tft.fillCircle(145,25,2,TFT_GREENYELLOW);
+    tft.drawString("fitlter: " + String(measurment) + "             ",150,20);
+    tft.setTextSize(1);
+    pixels[3] = pixels[2];
+    pixels[2] = map(reading, 0, scales[picker],130,1);
+    tft.drawLine(i,pixels[2],i,pixels[3],TFT_RED);
+    pixels[1] = pixels[0];
+    pixels[0] = map(measurment, 0, scales[picker],130,1);
+    tft.drawLine(i,pixels[0],i,pixels[1],TFT_GREENYELLOW);
+    
+
   }
-  delay(1);
+  
+  delay(25);
   
 
 }
