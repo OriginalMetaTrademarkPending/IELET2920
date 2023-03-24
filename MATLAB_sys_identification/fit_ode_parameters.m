@@ -2,7 +2,6 @@
 % system.
 type diff_eq
 
-
 %% TESTING THE DYNAMICS
 % The experiment shall last for 30 seconds. This is our timespan. In
 % addition, measurements will be taken every 1 ms (corresponds to 30000
@@ -17,7 +16,7 @@ u = @(t) heaviside(t - 5) - heaviside(t - 15) + heaviside(t - 20) - heaviside(t 
 % requires the response from the system with real parameters (or as real 
 % as they can get)...
 % Until further notice, do some guesstimates, see how the system reacts
-theta_real = [4, -3.9, 3.5, -4];
+theta_real = [4, -3.9, 0.003, -4];
 m0 = [0 0];
 soltrue = ode45(@(t, m)diff_eq(t, m, theta_real, u(t)), tspan, m0);
 m_true = deval(soltrue, tspan);
