@@ -11,20 +11,46 @@ tspan = 0:0.001:30;
 % The input signal is defined below as a square wave with on-time of 10 
 % seconds and off-time of 5 seconds.
 u = @(t) heaviside(t - 5) - heaviside(t - 15) + heaviside(t - 20) - heaviside(t - 30);
+u_1 = @(t) heaviside(t);
 
 % Somewhere here, we need the actual parameters...the least squares problem
 % requires the response from the system with real parameters (or as real 
 % as they can get)...
 % Until further notice, do some guesstimates, see how the system reacts
-theta_real = [4, -3.9, 0.003, -4];
+% guesstimate 1: theta(1) = 2, theta(2) = -1000, theta(3) = 2000, theta(4)
+% = -9
+% guesstimate 2: theta(1) = 0.2, theta(2) = -100, theta(3) = 200, theta(4)
+% = -2
+% guesstimate 3: theta(1) = 0.025, theta(2) = 0.05, theta(3) = 1, theta(4)
+% = -0.4
+
+% GUESSTIMATE RULES
+% 1. The sum of theta(1) and theta(2) must not be larger than 1 (the lower,
+% the better).
+% 2. Theta(4) must be larger than -1.
+% 3. Theta(3) must be approximately 1.
+% 4. Theta(3) must be larger than theta(1).
+theta_real = [0.025, 0.05, 1, -0.4];
 m0 = [0 0];
 soltrue = ode45(@(t, m)diff_eq(t, m, theta_real, u(t)), tspan, m0);
+soltrue_1 = ode45(@(t, m)diff_eq(t, m, theta_real, u_1(t)), tspan, m0);
 m_true = deval(soltrue, tspan);
+m_true_1 = deval(soltrue_1, tspan);
 y_true = m_true(1, :);
 y_hidden = m_true(2, :);
+y_true_1 = m_true_1(1, :);
+y_hidden_1 = m_true_1(2, :);
+
+figure(1)
 plot(tspan, y_true);
 hold on
 plot(tspan, y_hidden);
+hold off
+
+figure(2)
+plot(tspan, y_true_1);
+hold on
+plot(tspan, y_hidden_1);
 hold off
 
 %%
