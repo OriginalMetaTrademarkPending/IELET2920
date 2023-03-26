@@ -24,10 +24,10 @@ u_1 = @(t) heaviside(t);
 % guesstimate 3: theta(1) = 0.025, theta(2) = 0.05, theta(3) = 1, theta(4)
 % = -0.4
 
-% GUESSTIMATE RULES
+% GUESSTIMATE RULES OF THUMB
 % 1. The sum of theta(1) and theta(2) must not be larger than 1 (the lower,
 % the better).
-% 2. Theta(4) must be larger than -1.
+% 2. Theta(4) must be between -1 and 0.
 % 3. Theta(3) must be approximately 1.
 % 4. Theta(3) must be larger than theta(1).
 theta_real = [0.025, 0.05, 1, -0.4];
@@ -53,11 +53,14 @@ hold on
 plot(tspan, y_hidden_1);
 hold off
 
-%%
+%% LEAST SQUARES ESTIMATOR
 % Next, we import the data retrieved from the system testing, as well as
-% the starting points.
-m_data = 0;
-m0 = zeros(30000, 1);
+% the starting points. For this we need the filepath where the readings
+% are.
+FILEPATH = "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/python_scripts/data.csv";
+readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
+y_data = readings.Data;
+
 
 % In order to find the theta-parameters, we need to declare them as
 % optimization variables.
