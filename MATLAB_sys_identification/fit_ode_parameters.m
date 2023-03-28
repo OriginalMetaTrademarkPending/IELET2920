@@ -6,7 +6,7 @@ type diff_eq
 % The experiment shall last for 30 seconds. This is our timespan. In
 % addition, measurements will be taken every 1 ms (corresponds to 30000
 % samples/data points).
-tspan = 0:0.001:30;
+tspan = 0:0.01:30;
 
 % The input signal is defined below as a square wave with on-time of 10 
 % seconds and off-time of 5 seconds.
@@ -30,7 +30,7 @@ u_1 = @(t) heaviside(t);
 % 2. Theta(4) must be between -1 and 0.
 % 3. Theta(3) must be approximately 1.
 % 4. Theta(3) must be larger than theta(1).
-theta_real = [0.025, 0.05, 1, -0.4];
+theta_real = [0.025, 0.05, 1, -];
 m0 = [0 0];
 soltrue = ode45(@(t, m)diff_eq(t, m, theta_real, u(t)), tspan, m0);
 soltrue_1 = ode45(@(t, m)diff_eq(t, m, theta_real, u_1(t)), tspan, m0);
@@ -46,13 +46,16 @@ plot(tspan, y_true);
 hold on
 plot(tspan, y_hidden);
 hold off
+legend("Active Muscle Mass", "Fatigued Muscle Mass")
+xlabel("Time (s)")
+ylabel("Mass (kg)")
+title("Hand Grip Model Simulation")
 
 figure(2)
 plot(tspan, y_true_1);
 hold on
 plot(tspan, y_hidden_1);
 hold off
-
 %% LEAST SQUARES ESTIMATOR
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
