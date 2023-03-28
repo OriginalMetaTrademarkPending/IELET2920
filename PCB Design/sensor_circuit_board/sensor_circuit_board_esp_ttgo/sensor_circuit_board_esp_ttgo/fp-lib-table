@@ -1,4 +1,0 @@
-(fp_lib_table
-  (version 7)
-  (lib (name "ESP TTGO")(type "KiCad")(uri "/Users/admir/Downloads/ttgo-tdisplay-kicad-master")(options "")(descr ""))
-)

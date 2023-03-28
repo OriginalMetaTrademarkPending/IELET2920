@@ -1,4 +1,0 @@
-(sym_lib_table
-  (version 7)
-  (lib (name "ESPTTGO")(type "Legacy")(uri "/Users/admir/Downloads/ttgo-tdisplay-kicad-master/ttgo_esp32.lib")(options "")(descr ""))
-)
