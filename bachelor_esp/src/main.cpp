@@ -42,7 +42,7 @@ bool graphing = false;
 int button1Pin = 0;
 int button2Pin = 35;
 
-const int scales[3] = {130, 2000, 4095};
+const int scales[4] = {130, 1000, 2000, 4095};
 
 int picker = 0;
 
@@ -280,7 +280,7 @@ void loop() {
       while (digitalRead(button2Pin) == 0)  {}
       i = 0;
       tft.fillScreen(TFT_BLACK);
-      if (picker >= 3) {
+      if (picker >= 4) {
         picker = 0;
       }
     }
@@ -304,7 +304,7 @@ void loop() {
     // bottom sensor
     botPixels[3] = botPixels[2];
     botPixels[2] = map(bottomReading, 0, scales[picker],130,1);
-    tft.drawLine(i,botPixels[2],i,botPixels[3],TFT_RED);
+    //tft.drawLine(i,botPixels[2],i,botPixels[3],TFT_RED);
     botPixels[1] = botPixels[0];
     botPixels[0] = map(botMeasurment, 0, scales[picker],130,1);
     tft.drawLine(i,botPixels[0],i,botPixels[1],TFT_GREENYELLOW);
@@ -312,7 +312,7 @@ void loop() {
     // bottom middle sensor
     botMidPixels[3] = botMidPixels[2];
     botMidPixels[2] = map(bottomMidReading, 0, scales[picker],130,1);
-    tft.drawLine(i,botMidPixels[2],i,botMidPixels[3],TFT_RED);
+    //tft.drawLine(i,botMidPixels[2],i,botMidPixels[3],TFT_RED);
     botMidPixels[1] = botMidPixels[0];
     botMidPixels[0] = map(botMidMeasurment, 0, scales[picker],130,1);
     tft.drawLine(i,botMidPixels[0],i,botMidPixels[1],TFT_ORANGE);
@@ -320,7 +320,7 @@ void loop() {
     // topmiddle sensor
     topMidPixels[3] = topMidPixels[2];
     topMidPixels[2] = map(topMidReading, 0, scales[picker],130,1);
-    tft.drawLine(i,topMidPixels[2],i,topMidPixels[3],TFT_RED);
+    //tft.drawLine(i,topMidPixels[2],i,topMidPixels[3],TFT_RED);
     topMidPixels[1] = topMidPixels[0];
     topMidPixels[0] = map(topMidMeasurment, 0, scales[picker],130,1);
     tft.drawLine(i,topMidPixels[0],i,topMidPixels[1],TFT_CYAN);
@@ -328,10 +328,10 @@ void loop() {
     // tope sensor
     topPixels[3] = topPixels[2];
     topPixels[2] = map(topReading, 0, scales[picker],130,1);
-    tft.drawLine(i,topPixels[2],i,topPixels[3],TFT_RED);
+    //tft.drawLine(i,topPixels[2],i,topPixels[3],TFT_RED);
     topPixels[1] = topPixels[0];
     topPixels[0] = map(topMeasurment, 0, scales[picker],130,1);
-    tft.drawLine(i,topPixels[0],i,topPixels[1],TFT_YELLOW);
+    tft.drawLine(i,topPixels[0],i,topPixels[1],TFT_BLUE);
     
   }
   
