@@ -13,7 +13,7 @@ void setup() {
 unsigned long sampleStartTime = millis();
 
 void loop() {
-    if((millis() - sampleStartTime) > sampleTime){
+    if((millis() - sampleStartTime) >= sampleTime){
       pressureVal = analogRead(pressurePin);
       kgVal = static_cast<float>(pressureVal*50.0/1023);
       Serial.print(String(kgVal));

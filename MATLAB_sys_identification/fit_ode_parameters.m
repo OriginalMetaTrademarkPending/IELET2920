@@ -6,10 +6,11 @@ type diff_eq
 % The experiment shall last for 30 seconds. This is our timespan. In
 % addition, measurements will be taken every 1 ms (corresponds to 30000
 % samples/data points).
-tspan = linspace(0, 60, 600);
+tspan = linspace(0, 60, 590);
 N = max(size(tspan));
 
 % The input signal is defined below
+u = @(t) heaviside(t-10) - heaviside(t - 30) + heaviside(t - 40) - heaviside(t - 50);
 % u = 0.5*square((2*pi*tspan./40) + (pi/2)) + 0.5;
 % u = 1;
 %u_1 = @(t) heaviside(t);
@@ -33,9 +34,9 @@ N = max(size(tspan));
 % 2. Theta(4) must be between 1 and 0.
 % 3. Theta(3) must be approximately 1.
 % 4. Theta(3) must be larger than theta(1).
-theta_real = [0.025 0.05 1 0.4 12];
+theta_real = [0.0488 0.2173 2.2255 0.0337, 9.2236];
 m0 = [0 0];
-soltrue = ode45(@(t, m)diff_eq(t, m, theta_real), tspan, m0);
+soltrue = ode45(@(t, m)diff_eq(t, m, theta_real, u(t)), tspan, m0);
 %soltrue_1 = ode45(@(t, m)diff_eq(t, m, theta_real, u_1(t)), tspan, m0);
 m_true = deval(soltrue, tspan);
 %m_true_1 = deval(soltrue_1, tspan);
@@ -73,7 +74,7 @@ y_hidden = m_true(2, :);
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/python_scripts/data.csv";
+FILEPATH = "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/python_scripts/data2.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data;
 
@@ -89,12 +90,11 @@ type theta_to_ode
 
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
-fcn = fcn2optimexpr(@theta_to_ode, theta, tspan, m0);
+fcn = fcn2optimexpr(@theta_to_ode, theta, tspan, m0, u);
 %show(fcn)
 
 % Finally, the objective function can be defined.
-opt = optimoptions("lsqnonlin", "StepTolerance", 0.0001);
-obj = sum((fcn - y_data).^2);
+obj = sum(sum((fcn - y_data).^2));
 
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);
@@ -103,13 +103,13 @@ prob = optimproblem("Objective", obj);
 theta_0.theta = theta_real;
 
 % Solve the optimization problem
-[theta_sol, sumsq] = solve(prob, theta_0, "Options", opt);
+[theta_sol, sumsq] = solve(prob, theta_0);
 
 disp(theta_sol.theta)
 disp(sumsq)
 
 %% PLOT ALL RESULTS
-solest = ode45(@(t, m)diff_eq(t, m, theta_sol.theta), tspan, m0);
+solest = ode45(@(t, m)diff_eq(t, m, theta_sol.theta, u(t)), tspan, m0);
 m_est = deval(solest, tspan);
 y_est_active = m_est(1, :);
 y_est_hidden = m_est(2, :);
