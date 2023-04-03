@@ -55,40 +55,22 @@ u = @(t) heaviside(t-10) - heaviside(t - 30) + heaviside(t - 40) - heaviside(t -
 % 4. Theta(3) must be larger than theta(1).
 theta_real = [0.1394 0.1766 1.3288 0.1021 8];
 m0 = [0 0];
-soltrue = ode45(@(t, m)diff_eq(t, m, theta_real, u(t)), tspan, m0);
-%soltrue_1 = ode45(@(t, m)diff_eq(t, m, theta_real, u_1(t)), tspan, m0);
-m_true = deval(soltrue, tspan);
-%m_true_1 = deval(soltrue_1, tspan);
-y_true = m_true(1, :);
-y_hidden = m_true(2, :);
-%y_true_1 = m_true_1(1, :);
-%y_hidden_1 = m_true_1(2, :);
+% soltrue = ode45(@(t, m)diff_eq(t, m, theta_real, u(t)), tspan, m0);
+% m_true = deval(soltrue, tspan);
+% y_true = m_true(1, :);
+% y_hidden = m_true(2, :);
 
-%Discrete case
-% m_sol = zeros(N, 2);
-% m_sol(1, :) = m0;
-% phi_real =  [2, 2, 2, 2, 50];
-% for i = 2:N
-%     m_sol(i, :) = disc_diff_eq(m_sol(i-1, :), phi_real, 0.1, u(tspan(i)));
-% end
+% New solution. Solve via ode45 for each sample, then save the data in the
+% different vectors.
+sol_timeframe = NaN(2, N);
+sol_timeframe(:, 1) = m0';
+for i = 2:N
+    part_sol = ode45(@(t,m)diff_eq(t, m, theta_real, u(t)), [tspan(i-1), tspan(i)], sol_timeframe(:, i-1));
+    sol_timeframe(:, i) = part_sol.y(:, end);
+end
 
-% figure(1)
-% plot(tspan, y_true);
-% hold on
-% plot(tspan, y_hidden);
-% % plot(tspan, m_sol(:, 1));
-% % plot(tspan, m_sol(:, 2));
-% hold off
-% legend("Active Muscle Mass", "Fatigued Muscle Mass"); %"Forward Euler Active Muscle Mass", "Forward Euler Fatigued Muscle Mass");
-% xlabel("Time (s)")
-% ylabel("Mass (kg)")
-% title("Hand Grip Model Simulation")
-
-% figure(2)
-% plot(tspan, y_true_1);
-% hold on
-% plot(tspan, y_hidden_1);
-% hold off
+y_true = sol_timeframe(1, :);
+y_hidden = sol_timeframe(2, :);
 
 %% LEAST SQUARES ESTIMATOR
 % In order to find the theta-parameters, we need to declare them as
@@ -103,7 +85,7 @@ type theta_to_ode
 
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
-fcn = fcn2optimexpr(@theta_to_ode, theta, tspan, m0, u);
+fcn = fcn2optimexpr(@theta_to_ode, theta, tspan, m0, u, N);
 %show(fcn)
 
 % Finally, the objective function can be defined.
