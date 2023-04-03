@@ -5,19 +5,13 @@ type disc_diff_eq
 %% INITIALIZING SIMULATION
 tspan = 60;           %Time span of the simulation in seconds
 N = 590;              %Number of samples to be registered
-h = tspan/N;          %Sample time in seconds
 t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
 
 % Defining the phi parameters. These parameters are defined as the theta
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time.
-phi_first_guess = [0.1, 0.1, 0.1, 0.1, 20];
-
-% Defining the theta parameters. These parameters are the factual
-% parameters of the system. They will be defined as functions of the phi
-% parameters.
-theta_first_guess = phi_first_guess./h;
+phi_first_guess = [0.05, 1, 0.3, 1.0, 7];
 
 % The input signal is defined below. The function is then run with each
 % element.
@@ -32,7 +26,7 @@ mk(1, :) = zeros(1, 2);
 
 % Running simulation
 for i = 2:N
-    mk(i, :) = disc_diff_eq(mk(i-1, :), theta_first_guess, h, u_vec(i));
+    mk(i, :) = disc_diff_eq(mk(i-1, :), phi_first_guess, u_vec(i));
 end
 
 % Splitting the results
@@ -59,7 +53,7 @@ y_data = readings.Data;
 
 % In order to find the theta-parameters, we need to declare them as
 % optimization variables.
-theta = optimvar('theta', 5);
+phi = optimvar('phi', 5, 'LowerBound', [0, 0, 0, 0, 0], 'UpperBound',[1, 1, 1, 1, 10]);
 
 % The objective function is the sum of squares of the differences between
 % the "real" solution and the data. In order to define the objective
@@ -69,7 +63,7 @@ type disc_theta_to_ode
 
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
-fcn = fcn2optimexpr(@disc_theta_to_ode, theta, N, h, u_vec);
+fcn = fcn2optimexpr(@disc_theta_to_ode, phi, N, u_vec);
 fcn_2_compare = fcn(:, 1);
 
 % Finally, the objective function can be defined.
@@ -79,23 +73,18 @@ obj = sum((fcn_2_compare - y_data).^2);
 prob = optimproblem("Objective", obj);
 
 % Initial guess on theta
-theta_0.theta = theta_first_guess;
+phi_0.phi = phi_first_guess;
 
 % Solve the optimization problem
-[theta_sol, sumsq] = solve(prob, theta_0);
+[phi_sol, sumsq] = solve(prob, phi_0);
 
-disp(theta_sol.theta)
+disp(phi_sol.phi)
 disp(sumsq)
-
-% Display the corresponding phi parameters
-phi_sol = theta_sol.theta.*h;
-disp(phi_sol)
-
 %% PLOT ALL RESULTS
 m_est = NaN(N, 2);
 m_est(1, :) = zeros(1, 2);
 for i = 2:N
-    m_est(i, :) = disc_diff_eq(m_est(i-1, :), theta_sol.theta, h, u_vec(i));
+    m_est(i, :) = disc_diff_eq(m_est(i-1, :), phi_sol.phi, u_vec(i));
 end
 m_est_active = m_est(:, 1);
 m_est_hidden = m_est(:, 2);

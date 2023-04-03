@@ -9,6 +9,25 @@ type diff_eq
 tspan = linspace(0, 60, 590);
 N = max(size(tspan));
 
+%% DATA ACQUISITION AND INPUT ESTIMATION
+% Next, we import the data retrieved from the system testing, as well as
+% the starting points. For this we need the filepath where the readings
+% are.
+FILEPATH = "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/python_scripts/data2.csv";
+readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
+y_data = readings.Data;
+
+% % This code block estimates the input of the system
+% u = zeros(N, 1);
+% for i = 1:N
+%     if y_data(i) > 3.0
+%         u(i) = 1.0;
+%     else
+%         u(i) = 0.0;
+%     end
+% end
+
+%% SIMULATION OF THE SYSTEM (WITH INITIAL GUESSES)
 % The input signal is defined below
 u = @(t) heaviside(t-10) - heaviside(t - 30) + heaviside(t - 40) - heaviside(t - 50);
 % u = 0.5*square((2*pi*tspan./40) + (pi/2)) + 0.5;
@@ -34,7 +53,7 @@ u = @(t) heaviside(t-10) - heaviside(t - 30) + heaviside(t - 40) - heaviside(t -
 % 2. Theta(4) must be between 1 and 0.
 % 3. Theta(3) must be approximately 1.
 % 4. Theta(3) must be larger than theta(1).
-theta_real = [0.0488 0.2173 2.2255 0.0337, 9.2236];
+theta_real = [0.1394 0.1766 1.3288 0.1021 8];
 m0 = [0 0];
 soltrue = ode45(@(t, m)diff_eq(t, m, theta_real, u(t)), tspan, m0);
 %soltrue_1 = ode45(@(t, m)diff_eq(t, m, theta_real, u_1(t)), tspan, m0);
@@ -70,14 +89,8 @@ y_hidden = m_true(2, :);
 % hold on
 % plot(tspan, y_hidden_1);
 % hold off
-%% LEAST SQUARES ESTIMATOR
-% Next, we import the data retrieved from the system testing, as well as
-% the starting points. For this we need the filepath where the readings
-% are.
-FILEPATH = "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/python_scripts/data2.csv";
-readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
-y_data = readings.Data;
 
+%% LEAST SQUARES ESTIMATOR
 % In order to find the theta-parameters, we need to declare them as
 % optimization variables.
 theta = optimvar('theta', 5);

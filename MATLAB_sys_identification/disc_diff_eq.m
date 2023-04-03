@@ -1,23 +1,25 @@
-function mkp1 = disc_diff_eq(mk, theta, h, u)
+function mkp1 = disc_diff_eq(mk, phi, u)
 % The differential equations describing hand grip dynamics, discretized
 % through forward Euler
 %   mk -> vector consisting of active muscle mass m_a and fatigued muscle
 %   mass m_f at sample k. m_a is the first element and m_f is the 
 %   second element.
 %   phi -> vector consisting of the discrete parameters to be evaluated.
-%   theta(1) = theta_af
-%   theta(2) = theta_ar
-%   theta(3) = theta_ra
-%   theta(4) = theta_fa
-%   theta(5) = M
+%   phi(1) = theta_af
+%   phi(2) = theta_ar
+%   phi(3) = theta_ra
+%   phi(4) = theta_fa
+%   phi(5) = M
 %   u -> scalar which serves as the control input for the model.
 %   The theta parameters are getting changed into phi parameters. These phi
 %   parameters are getting constrained between 0 and 1.
-phi = [1 - (h*(theta(1) + theta(2) - u*(theta(2) - theta(3))));
-       h*(theta(4) - (u*theta(3)));
-       h*theta(3)*theta(5);
-       h*theta(1);
-       1-(h*theta(4))];
-mkp1 = [(phi(1)*mk(1)) + (phi(2)*mk(2)) + (phi(3)*u); (phi(4)*mk(1)) + (phi(5)*mk(2))];
+p_af = phi(1); p_ar = phi(2); p_ra = phi(3); p_fa = phi(4); M = phi(5);
+
+A = [1 - p_af - p_ar + (p_ar - p_ra)*u, p_fa - (p_ra*u);
+     p_af, 1-p_fa];
+
+B = [p_ra*M; 0];
+
+mkp1 = A*mk' + B*u;
 end
 
