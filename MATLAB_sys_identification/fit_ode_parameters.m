@@ -5,7 +5,7 @@ type diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../python_scripts/test4.csv";
+FILEPATH = "../python_scripts/data.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data;
 
@@ -18,7 +18,7 @@ tspan = linspace(0, 120, N);
 % measurements.
 u = zeros(N, 1);
 for i = 1:N
-    if y_data(i) > 1.0
+    if y_data(i) > 0.5
         u(i) = 1.0;
     else
         u(i) = 0.0;
