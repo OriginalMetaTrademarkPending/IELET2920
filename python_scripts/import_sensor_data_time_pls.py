@@ -8,7 +8,7 @@ arduino_port = "/dev/cu.usbmodem14201"
 baud = 9600
 
 # File name for the .csv file
-file_name = "python_scripts/data2.csv"
+file_name = "python_scripts/test4.csv"
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = 9600, timeout = 0.0005)
@@ -27,7 +27,7 @@ start_time = process_time()
 print("Data measurement starts now!")
 
 # Take measurements for 2 minutes
-while (process_time() - start_time) < 60.0:
+while (process_time() - start_time) < 120.0:
     if(ser.inWaiting() > 0):
         sensor_data_str += ser.read(ser.inWaiting()).decode('utf-8')
 

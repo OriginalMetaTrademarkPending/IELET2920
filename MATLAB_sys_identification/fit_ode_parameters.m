@@ -5,18 +5,20 @@ type diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/python_scripts/data.csv";
+FILEPATH = "../python_scripts/test4.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data;
 
-% Setting up the simulation time
+% Setting up the simulation time and the number of samples based on the
+% data we received
 N = max(size(y_data));
-tspan = linspace(0, 60, N);
+tspan = linspace(0, 120, N);
 
-% This code block estimates the input of the system
+% This code block estimates the input of the system based on the
+% measurements.
 u = zeros(N, 1);
 for i = 1:N
-    if y_data(i) > 5.0
+    if y_data(i) > 1.0
         u(i) = 1.0;
     else
         u(i) = 0.0;
@@ -75,7 +77,7 @@ y_hidden = sol_timeframe(2, :);
 %% LEAST SQUARES ESTIMATOR
 % In order to find the theta-parameters, we need to declare them as
 % optimization variables.
-theta = optimvar('theta', 5);
+theta = optimvar('theta', 5, 'LowerBound', [0, 0, 0, 0, 0]);
 
 % The objective function is the sum of squares of the differences between
 % the "real" solution and the data. In order to define the objective
