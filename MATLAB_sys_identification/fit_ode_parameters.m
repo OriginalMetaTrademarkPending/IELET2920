@@ -1,35 +1,35 @@
 % We start by importing the differential equations which describe the
 % system.
 type diff_eq
-
-%% TESTING THE DYNAMICS
-% The experiment shall last for 30 seconds. This is our timespan. In
-% addition, measurements will be taken every 1 ms (corresponds to 30000
-% samples/data points).
-tspan = linspace(0, 60, 590);
-N = max(size(tspan));
-
 %% DATA ACQUISITION AND INPUT ESTIMATION
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/python_scripts/data2.csv";
+FILEPATH = "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/python_scripts/data.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data;
 
-% % This code block estimates the input of the system
-% u = zeros(N, 1);
-% for i = 1:N
-%     if y_data(i) > 3.0
-%         u(i) = 1.0;
-%     else
-%         u(i) = 0.0;
-%     end
-% end
+% Setting up the simulation time
+N = max(size(y_data));
+tspan = linspace(0, 60, N);
+
+% This code block estimates the input of the system
+u = zeros(N, 1);
+for i = 1:N
+    if y_data(i) > 5.0
+        u(i) = 1.0;
+    else
+        u(i) = 0.0;
+    end
+end
+
 
 %% SIMULATION OF THE SYSTEM (WITH INITIAL GUESSES)
+% The experiment shall last for 30 seconds. This is our timespan. In
+% addition, measurements will be taken every 1 ms (corresponds to 30000
+% samples/data points).
 % The input signal is defined below
-u = @(t) heaviside(t-10) - heaviside(t - 30) + heaviside(t - 40) - heaviside(t - 50);
+% u = @(t) heaviside(t) - heaviside(t - 8.8) + heaviside(t - 27.5) - heaviside(t - 47.7);
 % u = 0.5*square((2*pi*tspan./40) + (pi/2)) + 0.5;
 % u = 1;
 %u_1 = @(t) heaviside(t);
@@ -65,7 +65,7 @@ m0 = [0 0];
 sol_timeframe = NaN(2, N);
 sol_timeframe(:, 1) = m0';
 for i = 2:N
-    part_sol = ode45(@(t,m)diff_eq(t, m, theta_real, u(t)), [tspan(i-1), tspan(i)], sol_timeframe(:, i-1));
+    part_sol = ode45(@(t,m)diff_eq(t, m, theta_real, u(i)), [tspan(i-1), tspan(i)], sol_timeframe(:, i-1));
     sol_timeframe(:, i) = part_sol.y(:, end);
 end
 
@@ -104,10 +104,14 @@ disp(theta_sol.theta)
 disp(sumsq)
 
 %% PLOT ALL RESULTS
-solest = ode45(@(t, m)diff_eq(t, m, theta_sol.theta, u(t)), tspan, m0);
-m_est = deval(solest, tspan);
-y_est_active = m_est(1, :);
-y_est_hidden = m_est(2, :);
+solest = NaN(2, N);
+solest(:, 1) = m0;
+for i = 2:N
+    part_solest = ode45(@(t,m)diff_eq(t, m, theta_sol.theta, u(i)), [tspan(i-1), tspan(i)], solest(:, i-1));
+    solest(:, i) = part_solest.y(:, end);
+end
+y_est_active = solest(1, :);
+y_est_hidden = solest(2, :);
 
 figure(2)
 plot(tspan, y_true, '--');
@@ -116,8 +120,9 @@ plot(tspan, y_hidden, '--');
 plot(tspan, y_est_active);
 plot(tspan, y_est_hidden);
 plot(tspan, y_data)
+plot(tspan, u);
 hold off
-legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass");
+legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass", "Input");
 xlabel("Time (s)")
 ylabel("Mass (kg)")
 title("Hand Grip System Identification")

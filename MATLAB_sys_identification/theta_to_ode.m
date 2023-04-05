@@ -8,7 +8,7 @@ function solution = theta_to_ode(theta, tspan, m0, u, N)
 sol_timeframe = NaN(2, N);
 sol_timeframe(:, 1) = m0';
 for i = 2:N
-    part_sol = ode45(@(t,m)diff_eq(t, m, theta, u(t)), [tspan(i-1), tspan(i)], sol_timeframe(:, i-1));
+    part_sol = ode45(@(t,m)diff_eq(t, m, theta, u(i)), [tspan(i-1), tspan(i)], sol_timeframe(:, i-1));
     sol_timeframe(:, i) = part_sol.y(:, end);
 end
 solution = sol_timeframe(1, :)';
