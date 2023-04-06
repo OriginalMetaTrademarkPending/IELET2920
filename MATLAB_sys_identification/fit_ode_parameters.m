@@ -18,7 +18,7 @@ tspan = linspace(0, 120, N);
 % measurements.
 u = zeros(N, 1);
 for i = 1:N
-    if y_data(i) > 0.5
+    if y_data(i) > 1.0
         u(i) = 1.0;
     else
         u(i) = 0.0;

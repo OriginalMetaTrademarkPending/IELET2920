@@ -9,7 +9,7 @@ function dmdt = diff_eq(~, m, theta, u)
 %   theta(4) = theta_fa
 %   theta(5) = M
 %   u -> scalar which serves as the control input for the model.
-dmdt = [(-theta(1)-theta(2) + ((theta(2) - theta(3)).*u)).*m(1) + ((theta(4) - (theta(3).*u)).*m(2)) + (theta(3)*theta(5).*u);
-    (theta(1).*m(1)) - theta(4).*m(2)];
+dmdt = [(-theta(1)-theta(2) + ((theta(2) - theta(3))*u))*m(1) + ((theta(4) - (theta(3)*u))*m(2)) + (theta(3)*theta(5)*u);
+    (theta(1)*m(1)) - theta(4)*m(2)];
 end
 
