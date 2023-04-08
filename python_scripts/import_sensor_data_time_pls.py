@@ -8,7 +8,7 @@ arduino_port = "/dev/cu.usbmodem14201"
 baud = 9600
 
 # File name for the .csv file
-file_name = "python_scripts/test4.csv"
+file_name = "python_scripts/test9.csv"
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = 9600, timeout = 0.0005)
