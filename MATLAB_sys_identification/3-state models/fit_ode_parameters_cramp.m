@@ -5,7 +5,7 @@ type diff_eq_cramp
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../python_scripts/test11.csv";
+FILEPATH = "../../python_scripts/test11.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data;
 
@@ -55,16 +55,17 @@ end
 % 2. Theta(4) must be between 1 and 0.
 % 3. Theta(3) must be approximately 1.
 % 4. Theta(3) must be larger than theta(1).
-theta_real = [0.1394 0.1766 1.3288 0.1021 8, 1.3288, 0.1766];
+theta_real = [0.1394 0.1766 1.3288 0.1021 8 0.5 0.5];
 m0 = [0 0 0];
-b = 0.01;
+b = 0;
 % soltrue = ode45(@(t, m)diff_eq(t, m, theta_real, u(t)), tspan, m0);
 % m_true = deval(soltrue, tspan);
 % y_true = m_true(1, :);
 % y_hidden = m_true(2, :);
 
 % New solution. Solve via ode45 for each sample, then save the data in the
-% different vectors.
+% different vectors. Use the data from previous sample as the initial
+% condition for the next iteration.
 sol_timeframe = NaN(3, N);
 sol_timeframe(:, 1) = m0';
 for i = 2:N
@@ -72,8 +73,10 @@ for i = 2:N
     sol_timeframe(:, i) = part_sol.y(:, end);
 end
 
-y_true = sol_timeframe(1, :) + (b*sol_timeframe(3, :));
-y_hidden = sol_timeframe(2, :);
+y_sim = sol_timeframe(1, :) + (b*sol_timeframe(3, :));
+y_active = sol_timeframe(1, :);
+y_fatigued = sol_timeframe(2, :);
+y_cramped = sol_timeframe(3, :);
 
 %% LEAST SQUARES ESTIMATOR
 % In order to find the theta-parameters, we need to declare them as
@@ -92,7 +95,7 @@ fcn = fcn2optimexpr(@theta_to_ode_cramp, theta, tspan, m0, u, N, b);
 %show(fcn)
 
 % Finally, the objective function can be defined.
-obj = sum(sum((fcn - y_data).^2));
+obj = sum((fcn - y_data).^2);
 
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);
@@ -113,19 +116,65 @@ for i = 2:N
     part_solest = ode45(@(t,m)diff_eq_cramp(t, m, theta_sol.theta, u(i)), [tspan(i-1), tspan(i)], solest(:, i-1));
     solest(:, i) = part_solest.y(:, end);
 end
-y_est_active = (solest(1, :) + (b*solest(3, :)));
-y_est_hidden = solest(2, :);
+y_est_measured = (solest(1, :) + (b*solest(3, :)));
+y_est_active = solest(1, :);
+y_est_fatigued = solest(2, :);
+y_est_cramped = solest(3, :);
 
-figure(2)
-plot(tspan, y_true, '--');
+figure(1)
+plot(tspan, y_sim, '-.');
 hold on
-plot(tspan, y_hidden, '--');
+plot(tspan, y_active, '-.');
+plot(tspan, y_fatigued, '-.');
+plot(tspan, y_cramped, '-.');
+plot(tspan, y_est_measured);
 plot(tspan, y_est_active);
-plot(tspan, y_est_hidden);
+plot(tspan, y_est_fatigued);
+plot(tspan, y_est_cramped);
 plot(tspan, y_data)
 plot(tspan, u);
 hold off
-legend("Active + Cramped Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass", "Input");
+legend("Active + Cramped Muscle Mass", "Active Muscle Mass", ...
+    "Fatigued Muscle Mass", "Cramped Muscle Mass", ...
+    "Estimated Active + Cramped Muscle Mass", "Estimated Active Muscle Mass", ...
+    "Estimated Fatigued Muscle Mass", "Estimated Cramped Muscle Mass", ...
+    "Measurements", "Input");
 xlabel("Time (s)")
 ylabel("Mass (kg)")
 title("Hand Grip System Identification")
+
+figure(2)
+ax1 = subplot(2, 2, 1);
+plot(tspan, y_sim, '-.');
+hold on
+plot(tspan, y_est_measured);
+plot(tspan, y_data);
+plot(tspan, u);
+hold off
+legend("Simulated measurements", "Estimated measurements", "Measurements", "Input");
+title("Measurements");
+
+ax2 = subplot(2, 2, 2);
+plot(tspan, y_active, '-.');
+hold on
+plot(tspan, y_est_active);
+hold off
+legend("Simulated active mass", "Estimated active mass");
+title("Active Mass");
+
+ax3 = subplot(2, 2, 3);
+plot(tspan, y_fatigued, '-.');
+hold on
+plot(tspan, y_est_fatigued);
+hold off
+legend("Simulated fatigued mass", "Estimated fatigued mass");
+title("Fatigued Mass");
+
+ax4 = subplot(2, 2, 4);
+plot(tspan, y_cramped, '-.');
+hold on
+plot(tspan, y_est_cramped);
+hold off
+legend("Simulated cramped mass", "Estimated cramped mass");
+title("Cramped Mass");
+linkaxes([ax1, ax2, ax3, ax4]);
