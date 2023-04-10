@@ -5,7 +5,7 @@ type diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/2-sensor-test4.csv";
+FILEPATH = "../../python_scripts/2-sensor-test1.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data_1 = readings.Data1;
 y_data_2 = readings.Data2;
@@ -158,7 +158,7 @@ xlabel("Time (s)")
 ylabel("Mass (kg)")
 title("Hand Grip System Identification")
 
-ax2 = subplot(2, 1, 2);
+ax2 = subplots(2, 1, 2);
 plot(tspan, y_true_2, '--');
 hold on
 plot(tspan, y_hidden_2, '--');
