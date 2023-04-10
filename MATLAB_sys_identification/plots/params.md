@@ -1,0 +1,118 @@
+# PARAMETER LIST FOR ALL THE TESTS
+
+## TEST 1: test1.csv
+$\theta_{af} = 0.0427$ \\
+$\theta_{ar} = 341.1526$ \\
+$\theta_{ra} = 3.1696$ \\
+$\theta_{fa} = 0.0747$ \\
+$M = 6.3241$ \\
+
+Sum of squares: $305.6513$
+
+## TEST 2: test2.csv
+$\theta_{af} = 0.0216$ \\
+$\theta_{ar} = 29.7083$ \\
+$\theta_{ra} = 4.9487$ \\
+$\theta_{fa} = 0.0000$ \\
+$M = 7.4149$ \\
+
+Sum of squares: $297.8530$
+
+## TEST 3: test3.csv
+$\theta_{af} = 1.2019$ \\
+$\theta_{ar} = 75.4510$ \\
+$\theta_{ra} = 2.3210$ \\
+$\theta_{fa} = 1.0925$ \\
+$M = 12.1936$ \\
+
+Sum of squares: $954.0013$
+
+## TEST 4: test4.csv
+$\theta_{af} = 0.1093$ \\
+$\theta_{ar} = 517.0190$ \\
+$\theta_{ra} = 5.3904$ \\
+$\theta_{fa} = 0.1584$ \\
+$M = 5.9675$ \\
+
+Sum of squares: $767.8368$
+
+## TEST 5: test5.csv
+$\theta_{af} = 0.0388$ \\
+$\theta_{ar} = 30.7900$ \\
+$\theta_{ra} = 5.0590$ \\
+$\theta_{fa} = 0.0274$ \\
+$M = 7.7743$ \\
+
+Sum of squares: $720.2042$
+
+## TEST 6: test6.csv
+$\theta_{af} = 0.0188$ \\
+$\theta_{ar} = 44.7447$ \\
+$\theta_{ra} = 3.2201$ \\
+$\theta_{fa} = 0.0259$ \\
+$M = 7.7510$ \\
+
+Sum of squares: $1153.0$
+
+## TEST 7: test7.csv
+$\theta_{af} = 0.2915$ \\
+$\theta_{ar} = 523.8487$ \\
+$\theta_{ra} = 3.2938$ \\
+$\theta_{fa} = 0.2315$ \\
+$M = 10.8623$ \\
+
+Sum of squares: $1149.2$
+
+## TEST 8: test8.csv
+$\theta_{af} = 0.0206$ \\
+$\theta_{ar} = 42.5030$ \\
+$\theta_{ra} = 4.6376$ \\
+$\theta_{fa} = 0.0089$ \\
+$M = 10.5343$ \\
+
+Sum of squares: $1681.8$
+
+## TEST 9: test9.csv
+$\theta_{af} = 0.0258$ \\
+$\theta_{ar} = 12.9653$ \\
+$\theta_{ra} = 1.8997$ \\
+$\theta_{fa} = 0.0230$ \\
+$M = 7.5095$ \\
+
+Sum of squares: $238.7625$
+
+## TEST 10: test10.csv
+$\theta_{af} = 0.0444$ \\
+$\theta_{ar} = 27.8633$ \\
+$\theta_{ra} = 4.0123$ \\
+$\theta_{fa} = 0.0757$ \\
+$M = 7.0505$ \\
+
+Sum of squares: $1202.6$
+
+## TEST 11: test11.csv
+$\theta_{af} = 0.0348$ \\
+$\theta_{ar} = 26.0091$ \\
+$\theta_{ra} = 4.1675$ \\
+$\theta_{fa} = 0.1146$ \\
+$M = 5.0401$ \\
+
+Sum of squares: $301.8511$
+
+## TEST 12: test12.csv
+$\theta_{af} = 0.4703$ \\
+$\theta_{ar} = 30.4603$ \\
+$\theta_{ra} = 1.2299$ \\
+$\theta_{fa} = 0.6805$ \\
+$M = 11.7070$ \\
+
+Sum of squares: $141.7213$
+
+## TEST 13: test13.csv
+$\theta_{af} = 0.0337$ \\
+$\theta_{ar} = 27.6584$ \\
+$\theta_{ra} = 4.6780$ \\
+$\theta_{fa} = 0.0433$ \\
+$M = 5.9944$ \\
+
+Sum of squares: $346.3655$
