@@ -8,7 +8,7 @@ arduino_port = "/dev/cu.usbmodem14201"
 baud = 9600
 
 # File name for the .csv file
-file_name = "python_scripts/test11.csv"
+file_name = "python_scripts/2-sensor-calib-test.csv"
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = 9600, timeout = 0.0005)
@@ -34,8 +34,8 @@ while (process_time() - start_time) < 120.0:
 print("Measurement complete")
 
 with open(file_name, 'w', encoding='UTF8') as f:
-    f.write("Data\n")
-    f.write(sensor_data_str.replace(",", "\n"))
+    f.write("Data1, Data2\n")
+    f.write(sensor_data_str.replace("nl", "\n"))
 
 print("CSV file complete")
 file.close()

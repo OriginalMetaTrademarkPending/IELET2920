@@ -5,26 +5,32 @@ type diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test14.csv";
+FILEPATH = "../../python_scripts/2-sensor-calib-test.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
-y_data = readings.Data;
+y_data_1 = readings.Data1;
+y_data_2 = readings.Data2;
 
 % Setting up the simulation time and the number of samples based on the
 % data we received
-N = max(size(y_data));
+N = max(size(y_data_1));
 tspan = linspace(0, 120, N);
 
 % This code block estimates the input of the system based on the
 % measurements.
-u = zeros(N, 1);
+u1 = zeros(N, 1);
+u2 = zeros(N, 1);
 for i = 1:N
-    if y_data(i) > 1.0
-        u(i) = 1.0;
+    if y_data_1(i) > 1.0
+        u1(i) = 1.0;
     else
-        u(i) = 0.0;
+        u1(i) = 0.0;
+    end
+    if y_data_2(i) > 1.0
+        u2(i) = 1.0;
+    else
+        u2(i) = 0.0;
     end
 end
-
 
 %% SIMULATION OF THE SYSTEM (WITH INITIAL GUESSES)
 % The experiment shall last for 30 seconds. This is our timespan. In
@@ -64,20 +70,27 @@ m0 = [0 0];
 
 % New solution. Solve via ode45 for each sample, then save the data in the
 % different vectors.
-sol_timeframe = NaN(2, N);
-sol_timeframe(:, 1) = m0';
+sol_timeframe_1 = NaN(2, N);
+sol_timeframe_1(:, 1) = m0';
+sol_timeframe_2 = NaN(2, N);
+sol_timeframe_2(:, 1) = m0';
 for i = 2:N
-    part_sol = ode45(@(t,m)diff_eq(t, m, theta_real, u(i)), [tspan(i-1), tspan(i)], sol_timeframe(:, i-1));
-    sol_timeframe(:, i) = part_sol.y(:, end);
+    part_sol_1 = ode45(@(t,m)diff_eq(t, m, theta_real, u1(i)), [tspan(i-1), tspan(i)], sol_timeframe_1(:, i-1));
+    part_sol_2 = ode45(@(t,m)diff_eq(t, m, theta_real, u2(i)), [tspan(i-1), tspan(i)], sol_timeframe_2(:, i-1));
+    sol_timeframe_1(:, i) = part_sol_1.y(:, end);
+    sol_timeframe_2(:, i) = part_sol_2.y(:, end);
 end
 
-y_true = sol_timeframe(1, :);
-y_hidden = sol_timeframe(2, :);
+y_true_1 = sol_timeframe_1(1, :);
+y_hidden_1 = sol_timeframe_1(2, :);
+y_true_2 = sol_timeframe_2(1, :);
+y_hidden_2 = sol_timeframe_2(2, :);
 
 %% LEAST SQUARES ESTIMATOR
 % In order to find the theta-parameters, we need to declare them as
 % optimization variables.
-theta = optimvar('theta', 5, 'LowerBound', [0, 0, 0, 0, 0]);
+theta_index = optimvar('theta_i', 5, 'LowerBound', [0, 0, 0, 0, 0]);
+theta_middle = optimvar('theta_m', 5, 'LowerBound', [0, 0, 0, 0, 0]);
 
 % The objective function is the sum of squares of the differences between
 % the "real" solution and the data. In order to define the objective
@@ -87,29 +100,37 @@ type theta_to_ode
 
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
-fcn = fcn2optimexpr(@theta_to_ode, theta, tspan, m0, u, N);
+fcn1 = fcn2optimexpr(@theta_to_ode, theta_index, tspan, m0, u1, N);
+fcn2 = fcn2optimexpr(@theta_to_ode, theta_middle, tspan, m0, u2, N);
 %show(fcn)
 
 % Finally, the objective function can be defined.
-obj = sum(sum((fcn - y_data).^2));
+obj1 = sum((fcn1 - y_data_1).^2);
+obj2 = sum((fcn2 - y_data_2).^2);
 
 % Now, the optimization problem
-prob = optimproblem("Objective", obj);
+prob_i = optimproblem("Objective", obj1);
+prob_m = optimproblem("Objective", obj2);
 
 % Initial guess on theta
-theta_0.theta = theta_real;
+theta_0_i.theta_i = theta_real;
+theta_0_m.theta_m = theta_real;
 
 % Solve the optimization problem
-[theta_sol, sumsq] = solve(prob, theta_0);
+[theta_sol_i, sumsq_i] = solve(prob_i, theta_0_i);
+[theta_sol_m, sumsq_m] = solve(prob_m, theta_0_m);
 
-disp(theta_sol.theta)
-disp(sumsq)
+disp(theta_sol_i.theta_i)
+disp(sumsq_i)
+
+disp(theta_sol_m.theta_m)
+disp(sumsq_m)
 
 %% PLOT ALL RESULTS
 solest = NaN(2, N);
 solest(:, 1) = m0;
 for i = 2:N
-    part_solest = ode45(@(t,m)diff_eq(t, m, theta_sol.theta, u(i)), [tspan(i-1), tspan(i)], solest(:, i-1));
+    part_solest = ode45(@(t,m)diff_eq(t, m, theta_sol_i.theta, u1(i)), [tspan(i-1), tspan(i)], solest(:, i-1));
     solest(:, i) = part_solest.y(:, end);
 end
 y_est_active = solest(1, :);
@@ -121,8 +142,8 @@ hold on
 plot(tspan, y_hidden, '--');
 plot(tspan, y_est_active);
 plot(tspan, y_est_hidden);
-plot(tspan, y_data)
-plot(tspan, u);
+plot(tspan, y_data_1)
+plot(tspan, u1);
 hold off
 legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass", "Input");
 xlabel("Time (s)")
