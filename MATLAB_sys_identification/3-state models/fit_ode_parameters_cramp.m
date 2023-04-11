@@ -104,7 +104,12 @@ prob = optimproblem("Objective", obj);
 theta_0.theta = theta_real;
 
 % Solve the optimization problem
-[theta_sol, sumsq] = solve(prob, theta_0);
+for i = 1:3
+    [theta_sol, sumsq] = solve(prob, theta_0);
+    theta_0 = theta_sol;
+    disp(theta_sol.theta)
+    disp(sumsq)
+end
 
 disp(theta_sol.theta)
 disp(sumsq)

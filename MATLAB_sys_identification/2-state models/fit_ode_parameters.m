@@ -5,7 +5,7 @@ type diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test14.csv";
+FILEPATH = "../../python_scripts/test13.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data;
 
@@ -13,6 +13,11 @@ y_data = readings.Data;
 % data we received
 N = max(size(y_data));
 tspan = linspace(0, 120, N);
+
+% Implementing a moving average filter to smoothen the data
+for i = 6:N
+    y_data(i) = (y_data(i) + y_data(i-1) + y_data(i-2) + y_data(i-3) + y_data(i-4) + y_data(i-5))/6;
+end
 
 % This code block estimates the input of the system based on the
 % measurements.

@@ -116,3 +116,60 @@ $\theta_{fa} = 0.0433$
 $M = 5.9944$  
 
 Sum of squares: $346.3655$
+
+## TEST 14: 2-sensor-test1.csv
+### Sensor 1
+$\theta_{af} = 0.0910$  
+$\theta_{ar} = 25.1783$  
+$\theta_{ra} = 9.3147$  
+$\theta_{fa} = 0.1620$  
+$M = 9.2016$  
+
+Sum of squares: $698.4725$
+
+### Sensor 2
+$\theta_{af} = 0.1986$  
+$\theta_{ar} = 51.5383$  
+$\theta_{ra} = 2.1399$  
+$\theta_{fa} = 0.2170$  
+$M = 8.9536$  
+
+Sum of squares: $390.7743$
+
+## TEST 15: 2-sensor-test2.csv
+### Sensor 1
+$\theta_{af} = 0.0855$  
+$\theta_{ar} = 17.9671$  
+$\theta_{ra} = 1.5633$  
+$\theta_{fa} = 0.1323$  
+$M = 5.8658$  
+
+Sum of squares: $665.9542$
+
+### Sensor 2
+$\theta_{af} = 0.0212$  
+$\theta_{ar} = 32.2945$  
+$\theta_{ra} = 7.8303$  
+$\theta_{fa} = 0.0214$  
+$M = 6.7532$  
+
+Sum of squares: $334.9421$
+
+## TEST 16: 2-sensor-test3.csv
+### Sensor 1
+$\theta_{af} = 0.0213$  
+$\theta_{ar} = 19.6008$  
+$\theta_{ra} = 2.7279$  
+$\theta_{fa} = 0.0072$  
+$M = 5.3069$  
+
+Sum of squares: $251.7131$
+
+### Sensor 2
+$\theta_{af} = 0.0317$  
+$\theta_{ar} = 21.9383$  
+$\theta_{ra} = 1.7044$  
+$\theta_{fa} = 0.0614$  
+$M = 7.5555$  
+
+Sum of squares: $315.2535$

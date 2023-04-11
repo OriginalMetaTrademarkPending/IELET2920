@@ -15,8 +15,8 @@ function mkp1 = disc_diff_eq(mk, phi, u)
 %   parameters are getting constrained between 0 and 1.
 p_af = phi(1); p_ar = phi(2); p_ra = phi(3); p_fa = phi(4); M = phi(5);
 
-A = [1 - p_af - p_ar + (p_ar - p_ra)*u, p_fa - (p_ra*u);
-     p_af, 1-p_fa];
+A = [p_af - p_ar + (p_ar - p_ra)*u, 1 - p_fa - (p_ra*u);
+     1 - p_af, p_fa];
 
 B = [p_ra*M; 0];
 

@@ -5,7 +5,7 @@ type diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/2-sensor-test4.csv";
+FILEPATH = "../../python_scripts/2-sensor-test2.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data_1 = readings.Data1;
 y_data_2 = readings.Data2;
@@ -111,6 +111,15 @@ obj2 = sum((fcn2 - y_data_2).^2);
 % Now, the optimization problem
 prob_i = optimproblem("Objective", obj1);
 prob_m = optimproblem("Objective", obj2);
+cons1_i = theta_index(1) + theta_index(2) <= 1;
+cons2_i = theta_index(3) >= theta_index(1);
+cons1_m = theta_middle(1) + theta_middle(2) <= 1;
+cons2_m = theta_middle(3) >= theta_middle;
+(1);
+prob_i.Constraints.cons1 = cons1_i;
+prob_i.Constraints.cons2 = cons2_i;
+prob_m.Constraints.cons1 = cons1_m;
+prob_m.Constraints.cons2 = cons2_m;
 
 % Initial guess on theta
 theta_0_i.theta_i = theta_real;
