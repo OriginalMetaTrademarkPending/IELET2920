@@ -7,9 +7,9 @@ type disc_diff_eq
 % are.
 FILEPATH = "../../python_scripts/test1.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
-y_data = readings.Data;
+y_data = readings.Data1;
 N = max(size(y_data));      %Number of samples to be registered
-tspan = 120;                %Time span of the simulation in seconds
+tspan = 60;                %Time span of the simulation in seconds
 %% INITIALIZING SIMULATION
 t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
 
@@ -17,13 +17,13 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time.
-phi_first_guess = [0.05, 0.9, 0.3, 1.0, 7];
+phi_first_guess = [0.2, 0.4, 0.5, 0.8, 7];
 
 % The input signal is defined below. The function is then run with each
 % element.
 u_vec = NaN(N, 1);
 for i = 1:N
-    if y_data(i) > 1.0
+    if y_data(i) > 2.0
         u_vec(i) = 1.0;
     else
         u_vec(i) = 0.0;
@@ -31,17 +31,17 @@ for i = 1:N
 end
 
 % Initializing the simulation results
-mk = NaN(N, 2);
-mk(1, :) = zeros(1, 2);
+mk = NaN(2, N);
+mk(:, 1) = zeros(2, 1);
 
 % Running simulation
 for i = 2:N
-    mk(i, :) = disc_diff_eq(mk(i-1, :), phi_first_guess, u_vec(i));
+    mk(:, i) = disc_diff_eq(mk(:, i-1), phi_first_guess, u_vec(i));
 end
 
 % Splitting the results
-m_active = mk(:, 1);
-m_fatig = mk(:, 2);
+m_active = mk(1, :);
+m_fatig = mk(2, :);
 
 % % Plotting the results
 % plot(t_vec, m_active);
@@ -56,7 +56,7 @@ m_fatig = mk(:, 2);
 %% LEAST SQUARES ESTIMATION
 % In order to find the theta-parameters, we need to declare them as
 % optimization variables.
-phi = optimvar('phi', 5, 'LowerBound', [0, 0, 0, 0, 0], 'UpperBound',[1, 1, 1, 1, 13]);
+phi = optimvar('phi', 5, 'LowerBound', [0, 0, 0, 0, 0], 'UpperBound', [1, 1, 1, 1, 8]);
 
 % The objective function is the sum of squares of the differences between
 % the "real" solution and the data. In order to define the objective
@@ -67,10 +67,9 @@ type disc_theta_to_ode
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
 fcn = fcn2optimexpr(@disc_theta_to_ode, phi, N, u_vec);
-fcn_2_compare = fcn(:, 1);
 
 % Finally, the objective function can be defined.
-obj = sum((fcn_2_compare - y_data).^2);
+obj = sum((fcn - y_data').^2);
 
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);
@@ -84,13 +83,13 @@ phi_0.phi = phi_first_guess;
 disp(phi_sol.phi)
 disp(sumsq)
 %% PLOT ALL RESULTS
-m_est = NaN(N, 2);
-m_est(1, :) = zeros(1, 2);
+m_est = NaN(2, N);
+m_est(:, 1) = zeros(2, 1);
 for i = 2:N
-    m_est(i, :) = disc_diff_eq(m_est(i-1, :), phi_sol.phi, u_vec(i));
+    m_est(:, i) = disc_diff_eq(m_est(:, i-1), phi_sol.phi, u_vec(i));
 end
-m_est_active = m_est(:, 1);
-m_est_hidden = m_est(:, 2);
+m_est_active = m_est(1, :);
+m_est_hidden = m_est(2, :);
 
 figure(2)
 plot(t_vec, m_active, '--');
@@ -98,7 +97,8 @@ hold on
 plot(t_vec, m_fatig, '--');
 plot(t_vec, m_est_active);
 plot(t_vec, m_est_hidden);
-plot(t_vec, y_data)
+plot(t_vec, y_data);
+plot(t_vec, u_vec);
 hold off
 legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass");
 xlabel("Time (s)")

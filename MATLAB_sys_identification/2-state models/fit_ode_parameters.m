@@ -5,20 +5,14 @@ type diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test13.csv";
+FILEPATH = "../../python_scripts/test1.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
-y_data = readings.Data;
+y_data = readings.Data1;
 
 % Setting up the simulation time and the number of samples based on the
 % data we received
 N = max(size(y_data));
 tspan = linspace(0, 120, N);
-
-% Implementing a moving average filter to smoothen the data
-for i = 6:N
-    y_data(i) = (y_data(i) + y_data(i-1) + y_data(i-2) + y_data(i-3) + y_data(i-4) + y_data(i-5))/6;
-end
-
 % This code block estimates the input of the system based on the
 % measurements.
 u = zeros(N, 1);
@@ -29,8 +23,6 @@ for i = 1:N
         u(i) = 0.0;
     end
 end
-
-
 %% SIMULATION OF THE SYSTEM (WITH INITIAL GUESSES)
 % The experiment shall last for 30 seconds. This is our timespan. In
 % addition, measurements will be taken every 1 ms (corresponds to 30000
@@ -100,6 +92,10 @@ obj = sum(sum((fcn - y_data).^2));
 
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);
+cons1 = theta(1) + theta(2) <= 1;
+cons2 = theta(3) >= theta(1);
+prob.Constraints.cons1 = cons1;
+prob.Constraints.cons2 = cons2;
 
 % Initial guess on theta
 theta_0.theta = theta_real;
