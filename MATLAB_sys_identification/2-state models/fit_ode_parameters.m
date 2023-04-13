@@ -92,10 +92,6 @@ obj = sum(sum((fcn - y_data).^2));
 
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);
-cons1 = theta(1) + theta(2) <= 1;
-cons2 = theta(3) >= theta(1);
-prob.Constraints.cons1 = cons1;
-prob.Constraints.cons2 = cons2;
 
 % Initial guess on theta
 theta_0.theta = theta_real;

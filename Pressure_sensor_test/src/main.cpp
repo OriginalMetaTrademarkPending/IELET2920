@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #define CONVERSION 50.0/1023.0
-#define WIN_SIZE 100
+#define WIN_SIZE 20
 const int pressurePinIndex = A0;
 const int pressurePinMiddle = A1;
-const unsigned long sampleTime = 10;
+const unsigned long sampleTime = 100;
 
 // Moving average filter variables
 int index = 0;

@@ -27,7 +27,7 @@ start_time = process_time()
 print("Data measurement starts now!")
 
 # Take measurements for 3 minutes
-while (process_time() - start_time) < 60.0:
+while (process_time() - start_time) < 120.0:
     if(ser.inWaiting() > 0):
         sensor_data_str += ser.read(ser.inWaiting()).decode('utf-8')
 
