@@ -17,7 +17,7 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time.
-phi_first_guess = [0.3, 0.9, 0.9, 0.7, 10];
+phi_first_guess = [0.9, 0.8, 0.9, 0.3, 10];
 
 % The input signal is defined below. The function is then run with each
 % element.
