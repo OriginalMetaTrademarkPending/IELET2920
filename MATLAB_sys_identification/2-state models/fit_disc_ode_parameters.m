@@ -5,11 +5,11 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test1.csv";
+FILEPATH = "../../python_scripts/test3.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1;
 N = max(size(y_data));      %Number of samples to be registered
-tspan = 60;                %Time span of the simulation in seconds
+tspan = 120;                %Time span of the simulation in seconds
 %% INITIALIZING SIMULATION
 t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
 
@@ -17,7 +17,7 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time.
-phi_first_guess = [0.3, 0.9, 0.9, 0.8, 10];
+phi_first_guess = [0.1, 0.9, 0.9, 0.7, 10];
 
 % The input signal is defined below. The function is then run with each
 % element.
@@ -56,7 +56,7 @@ m_fatig = mk(2, :);
 %% LEAST SQUARES ESTIMATION
 % In order to find the theta-parameters, we need to declare them as
 % optimization variables.
-phi = optimvar('phi', 5, 'LowerBound', [0, 0, 0, 0, 0], 'UpperBound', [1, 1, 1, 1, 20]);
+phi = optimvar('phi', 5, 'LowerBound', [0, 0, 0, 0, 0]);
 
 % The objective function is the sum of squares of the differences between
 % the "real" solution and the data. In order to define the objective
