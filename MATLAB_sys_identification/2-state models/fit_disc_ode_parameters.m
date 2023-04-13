@@ -56,7 +56,7 @@ m_fatig = mk(2, :);
 %% LEAST SQUARES ESTIMATION
 % In order to find the theta-parameters, we need to declare them as
 % optimization variables.
-phi = optimvar('phi', 5, 'LowerBound', [0, 0, 0, 0, 0], 'UpperBound', [1, 1, 1, 1, 50]);
+phi = optimvar('phi', 5, 'LowerBound', [0, 0, 0, 0, 0], 'UpperBound', [1, 1, 1, 1, 20]);
 
 % The objective function is the sum of squares of the differences between
 % the "real" solution and the data. In order to define the objective
