@@ -15,9 +15,9 @@ const bool displayRaw = false;
 const bool displayFiltered = true;
 
 // make true/false to enable/disable sensors
-const bool botsens = true;
-const bool botmidsens = true;
-const bool topmidsens = true;
+const bool botsens = false;
+const bool botmidsens = false;
+const bool topmidsens = false;
 const bool topsens = true;
 
 // Sensorpins
@@ -70,6 +70,12 @@ float xTop[] = {0.,100.}; // inital state
 float process_model[] = {change,process_var};
 float gaus_mes[] = {float(bottomReading),measurment_std*measurment_std};
 
+
+// pressure test
+
+const unsigned long sampleTime = 100;
+#define CONVERSION 50.0/4095.0
+unsigned long sampleStartTime = millis();
 
 
 float update(float prior[2], float measurment[2], bool returner)  {
@@ -140,11 +146,13 @@ void setup() {
   pinMode(button2Pin, INPUT_PULLUP);
 
   if (printRaw) {Serial.begin(115200);}
+  Serial.begin(115200);
 
   // square process var
   process_var = process_var * process_var;
   float process_model[2] = {change,process_var};
 }
+
 
 void loop() {
   // reading sensors
@@ -152,14 +160,23 @@ void loop() {
   if (botmidsens) {bottomMidReading = analogRead(bottomMiddleSensorPin);}
   if (topmidsens) {topMidReading = analogRead(topMiddleSensorPin);}
   if (topsens)    {topReading = analogRead(topSensorPin);}
+  
+  if((millis() - sampleStartTime) >= sampleTime){
+      float result = static_cast<float>(topReading*CONVERSION);
+      Serial.print(String(result));
+      Serial.print(",");
+      sampleStartTime = millis();
+    }
 
   // print raw sensors
   if (printRaw) {
     if (botsens)    {Serial.println("bottom: " + String(bottomReading));}
     if (botmidsens) {Serial.println("botmid: " + String(bottomMidReading));}
     if (topmidsens) {Serial.println("topmid: " + String(topMidReading));}
-    if (topsens)    {Serial.println("top: " + String(topReading));}
+    if (topsens)    {Serial.println("top:    " + String(topReading));}
   }
+
+  
 
 
   // basic kalman
@@ -301,7 +318,7 @@ void loop() {
     }
   }
   
-  delay(100);
+  delay(0);
   
 
 }

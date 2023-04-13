@@ -2,16 +2,16 @@ import serial
 from time import process_time
 
 # Defining the Arduino port
-arduino_port = "/dev/cu.usbmodem14201"
+arduino_port = "COM4"
 
 # Baud rate
-baud = 9600
+baud = 115200
 
 # File name for the .csv file
 file_name = "python_scripts/test1.csv"
 
 # Start the serial port
-ser = serial.Serial(port = arduino_port, baudrate = 9600, timeout = 0.0005)
+ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)
 print("Connected to Arduino port: " + arduino_port)
 
 # Open the csv file
