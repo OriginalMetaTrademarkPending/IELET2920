@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #define CONVERSION 50.0/1023.0
-#define WIN_SIZE 20
+#define WIN_SIZE 10
 const int pressurePinIndex = A0;
 const int pressurePinMiddle = A1;
 const unsigned long sampleTime = 100;
