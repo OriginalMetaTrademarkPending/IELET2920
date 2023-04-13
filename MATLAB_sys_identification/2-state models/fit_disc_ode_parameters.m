@@ -69,7 +69,7 @@ type disc_theta_to_ode
 fcn = fcn2optimexpr(@disc_theta_to_ode, phi, N, u_vec);
 
 % Finally, the objective function can be defined.
-obj = sum((fcn - y_data).^2);
+obj = sum((fcn - y_data').^2);
 
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);
