@@ -72,7 +72,6 @@ float gaus_mes[] = {float(bottomReading),measurment_std*measurment_std};
 
 
 // pressure test
-
 const unsigned long sampleTime = 100;
 #define CONVERSION 50.0/4095.0
 unsigned long sampleStartTime = millis();
@@ -161,12 +160,8 @@ void loop() {
   if (topmidsens) {topMidReading = analogRead(topMiddleSensorPin);}
   if (topsens)    {topReading = analogRead(topSensorPin);}
   
-  if((millis() - sampleStartTime) >= sampleTime){
-      float result = static_cast<float>(topReading*CONVERSION);
-      Serial.print(String(result));
-      Serial.print(",");
-      sampleStartTime = millis();
-    }
+  
+  
 
   // print raw sensors
   if (printRaw) {
@@ -318,6 +313,15 @@ void loop() {
     }
   }
   
+
+  if((millis() - sampleStartTime) >= sampleTime){
+      float result = static_cast<float>(topMeasurment*CONVERSION);
+      Serial.print(String(result));
+      Serial.print(",");
+      sampleStartTime = millis();
+    }
+  
+
   delay(0);
   
 
