@@ -5,7 +5,7 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test1.csv";
+FILEPATH = "../../python_scripts/test2.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1;
 N = max(size(y_data));      %Number of samples to be registered
@@ -69,7 +69,7 @@ type disc_theta_to_ode
 fcn = fcn2optimexpr(@disc_theta_to_ode, phi, N, u_vec);
 
 % Finally, the objective function can be defined.
-obj = sum((fcn - y_data').^2);
+obj = sum((fcn - y_data).^2);
 
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);
