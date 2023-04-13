@@ -17,7 +17,7 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time.
-phi_first_guess = [0.1, 0.9, 0.9, 0.7, 10];
+phi_first_guess = [0.3, 0.9, 0.9, 0.7, 10];
 
 % The input signal is defined below. The function is then run with each
 % element.
@@ -36,7 +36,7 @@ mk(:, 1) = zeros(2, 1);
 
 % Running simulation
 for i = 2:N
-    mk(:, i) = disc_diff_eq(mk(:, i-1), phi_first_guess, u_vec(i));
+    mk(:, i) = disc_diff_eq(mk(:, i-1), phi_first_guess, u_vec(i-1));
 end
 
 % Splitting the results
@@ -56,13 +56,13 @@ m_fatig = mk(2, :);
 %% LEAST SQUARES ESTIMATION
 % In order to find the theta-parameters, we need to declare them as
 % optimization variables.
-phi = optimvar('phi', 5, 'LowerBound', [0, 0, 0, 0, 0]);
-
 % The objective function is the sum of squares of the differences between
 % the "real" solution and the data. In order to define the objective
 % function, we need to import the function which computes the ODE with the
 % parameters
 type disc_theta_to_ode
+
+phi = optimvar('phi', 5, "LowerBound", [0, 0, 0, 0, 0]);
 
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
@@ -74,22 +74,19 @@ obj = sum((fcn - y_data').^2);
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);
 
-% %% OPTIMIZATION PROBLEM: CONSTRAINTS
-% % We find the constraints by performing eigenvalue decomposition on the
-% % matrices we get by setting u = 0 and u = 1. First, define these matrices
-% % through optimization variables.
-% A_0 = [phi(1) - phi(2), 1-phi(4);
-%     1 - phi(1), phi(4)];
-% 
-% A_1 = [phi(1) - phi(3), 1 - phi(4) - phi(3);
-%     1 - phi(1), phi(4)];
-% % The eigenvalues above are constrained within 0 and 1 (for a stable system
-% % in general). This yields 8 constraints.
-% prob.Constraints.cons1 = min(eigs(A_0)) >= 0;
-% prob.Constraints.cons2 = max(eigs(A_0)) <= 1;
-% prob.Constraints.cons3 = min(eigs(A_1)) >= 0;
-% prob.Constraints.cons4 = max(eigs(A_1)) <= 1;
+%% OPTIMIZATION PROBLEM: CONSTRAINTS
+% We find the constraints by performing tr(A)^2 - 4*det(A) on the
+% matrices we get by setting u = 0 and u = 1. First, define these matrices
+% through optimization variables.
+J_0 = [phi(1) - phi(2), 1-phi(4);
+    1 - phi(1), phi(4)];
 
+J_1 = [phi(1) - phi(3), 1 - phi(4) - phi(3);
+    1 - phi(1), phi(4)];
+
+% Now for the big answer!
+prob.Constraints.cons1 = trace(J_0)^2 <= 4*((J_0(1,1)*J_0(2,2)) - (J_0(1,2)*J_0(2,1)));
+prob.Constraints.cons2 = trace(J_1)^2 <= 4*((J_1(1,1)*J_1(2,2)) - (J_1(1,2)*J_1(2,1)));
 %% OPTIMIZATION PROBLEM: SOLVE
 % Initial guess on theta
 phi_0.phi = phi_first_guess;
