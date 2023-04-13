@@ -17,7 +17,7 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time.
-phi_first_guess = [0.3, 0.7, 0.9, 0.3, 20];
+phi_first_guess = [0.3, 0.9, 0.79, 0.5, 20];
 
 % The input signal is defined below. The function is then run with each
 % element.
@@ -70,7 +70,7 @@ fcn = fcn2optimexpr(@disc_theta_to_ode, phi, N, u_vec);
 optim_y = fcn(1, :);
 
 % Finally, the objective function can be defined.
-obj = sum((y_data - optim_y).^2);
+obj = sum((optim_y - y_data).^2);
 
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);

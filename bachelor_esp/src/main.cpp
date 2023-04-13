@@ -72,9 +72,8 @@ float gaus_mes[] = {float(bottomReading),measurment_std*measurment_std};
 
 
 // pressure test
-const unsigned long sampleTime = 10;
+const unsigned long sampleTime = 100;
 #define CONVERSION 50.0/4095.0
-unsigned long sampleStartTime = millis();
 
 
 float update(float prior[2], float measurment[2], bool returner)  {
@@ -152,6 +151,7 @@ void setup() {
   float process_model[2] = {change,process_var};
 }
 
+unsigned long sampleStartTime = millis();
 
 void loop() {
   // reading sensors
@@ -160,9 +160,6 @@ void loop() {
   if (topmidsens) {topMidReading = analogRead(topMiddleSensorPin);}
   if (topsens)    {topReading = analogRead(topSensorPin);}
   
-  
-  
-
   // print raw sensors
   if (printRaw) {
     if (botsens)    {Serial.println("bottom: " + String(bottomReading));}
@@ -320,10 +317,4 @@ void loop() {
       Serial.print(",");
       sampleStartTime = millis();
     }
-  
-  
-
-  delay(0);
-  
-
 }

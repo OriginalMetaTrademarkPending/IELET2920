@@ -13,7 +13,7 @@ function mkp1 = disc_diff_eq(mk, phi, u)
 %   u -> scalar which serves as the control input for the model.
 p_af = phi(1); p_ar = phi(2); p_ra = phi(3); p_fa = phi(4); M = phi(5);
 
-A = [p_af - p_ar + ((p_ar - p_ra)*u), 1 - p_fa - (p_ra*u);
+A = [p_af - p_ar + p_ar*u - p_ra*u, 1 - p_fa - p_ra*u;
      1 - p_af, p_fa];
 
 B = [p_ra*M; 0];
