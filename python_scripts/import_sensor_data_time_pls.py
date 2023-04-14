@@ -2,13 +2,14 @@ import serial
 from time import process_time
 
 # Defining the Arduino port
-arduino_port = "/dev/cu.wchusbserial54750076121"
+# arduino_port = "/dev/cu.wchusbserial54750076121"
+arduino_port = "COM4"
 
 # Baud rate
 baud = 115200
 
 # File name for the .csv file
-file_name = "python_scripts/test3.csv"
+file_name = "python_scripts/test6.csv"
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)

@@ -72,7 +72,7 @@ float gaus_mes[] = {float(bottomReading),measurment_std*measurment_std};
 
 
 // pressure test
-const unsigned long sampleTime = 100;
+const unsigned long sampleTime = 10;
 #define CONVERSION 50.0/4095.0
 
 
