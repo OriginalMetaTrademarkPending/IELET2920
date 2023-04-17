@@ -5,6 +5,6 @@ function solution = disc_theta_to_ode(phi, N, u)
 solution = NaN(2, N);
 solution(:, 1) = zeros(2, 1);
 for i = 2:N
-    solution(:, i) = disc_diff_eq(solution(:, i-1), phi, u(i-1));
+    solution(:, i) = disc_diff_eq(phi, solution(:, i-1), u(i-1));
 end
 end

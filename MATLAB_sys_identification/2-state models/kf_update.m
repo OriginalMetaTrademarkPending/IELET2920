@@ -1,4 +1,4 @@
-function [x_hat, P_hat] = kf_update(y, x_bar, P_bar, H, R)
+function [x_hat, P_hat, z] = kf_update(y, x_bar, P_bar, H, R)
 % Update step of the Kalman filter
 % First, calculate the residual
 z = y - H*x_bar;
