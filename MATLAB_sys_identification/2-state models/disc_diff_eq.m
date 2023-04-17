@@ -1,4 +1,4 @@
-function mkp1 = disc_diff_eq(mk, phi, u)
+function mkp1 = disc_diff_eq(phi, mk, u)
 % The differential equations describing hand grip dynamics, discretized
 % through forward Euler
 %   mk -> vector consisting of active muscle mass m_a and fatigued muscle
