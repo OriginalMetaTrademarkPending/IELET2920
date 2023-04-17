@@ -5,7 +5,7 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test4.csv";
+FILEPATH = "../../python_scripts/test3.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 N = max(size(y_data));      %Number of samples to be registered
@@ -17,7 +17,8 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time.
-phi_first_guess = [0.9, 0.7, 0.6, 0.9, 20]; % funker for test 1,2 og 6
+phi_first_guess = [0.99, 0.7, 0.6, 0.9, 20]; 
+% af, 
 
 % The input signal is defined below. The function is then run with each
 % element.
