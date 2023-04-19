@@ -15,6 +15,7 @@ type disc_diff_eq
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
@@ -44,6 +45,9 @@ FILEPATH = "../../python_scripts/test1.csv";
 =======
 FILEPATH = "../../python_scripts/test1.csv";
 >>>>>>> e10bbb0 (New parameter estimation changes)
+=======
+FILEPATH = "../../python_scripts/test_movavg_10ms.csv";
+>>>>>>> a7ffe45 (New changes to parameter estimation)
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
@@ -54,10 +58,14 @@ M_size = 100;
 =======
 tspan = 240;                %Time span of the simulation in seconds
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 564e173 (Massive changes to code, and perhaps a new success???)
 =======
 M_size = 50;
 >>>>>>> e10bbb0 (New parameter estimation changes)
+=======
+M_size = 100;
+>>>>>>> a7ffe45 (New changes to parameter estimation)
 %% INITIALIZING SIMULATION
 t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
 
@@ -90,6 +98,7 @@ M = linspace(0,30,1000);
 =======
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
+<<<<<<< HEAD
 phi_first_guess = [0.2, 0.5, 0.9, 0.7]; 
 <<<<<<< HEAD
 M = linspace(3, 30, 100);
@@ -99,6 +108,10 @@ M = linspace(3, 50, 1000);
 >>>>>>> cd85389 (git playing games)
 % af, 
 >>>>>>> 61698af (Circuit and PCB)
+=======
+phi_first_guess = [0.5, 0.5, 0.5, 0.5]; 
+M = linspace(3, 40, M_size);
+>>>>>>> a7ffe45 (New changes to parameter estimation)
 
 % The input signal is defined below. The function is then run with each
 % element.
@@ -166,7 +179,11 @@ type disc_theta_to_ode
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 phi = optimvar('phi', 4);
+=======
+phi = optimvar('phi', 4, 'LowerBound', [0, 0, 0, 0], 'UpperBound', [1, 1, 1, 1]);
+>>>>>>> a7ffe45 (New changes to parameter estimation)
 
 % Now, we express this function as an optimization expression.
 optim_y = optimexpr(1, N);
