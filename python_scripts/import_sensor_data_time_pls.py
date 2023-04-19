@@ -22,6 +22,7 @@ baud = 115200
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 file_name = "python_scripts/test_bias12.csv"
 =======
 file_name = "python_scripts/test1.csv"
@@ -38,6 +39,9 @@ file_name = "python_scripts/Estimate_R_series.csv"
 =======
 file_name = "python_scripts/Test_movavg_10ms3.csv"
 >>>>>>> 6efd097 (testing moving avarage)
+=======
+file_name = "python_scripts/Test_movavg_10ms5.csv"
+>>>>>>> 69453e9 (tests)
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)
