@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <SPI.h>
+#include <BasicLinearAlgebra.h>
+using namespace BLA;
 
 //screen setup and naming
 TFT_eSPI tft = TFT_eSPI();
@@ -149,6 +151,15 @@ void setup() {
   // square process var
   process_var = process_var * process_var;
   float process_model[2] = {change,process_var};
+
+  BLA::Matrix<2,3> A = {1,2,3,4,5,6};
+  BLA::Matrix<3,2> B = {10,11,20,21,30,31};
+  BLA::Matrix<2,2> C = A*B;
+  BLA::Matrix<2,2> C_inv = C;
+  
+  // making sure the matrix is not singular
+  bool is_nonsingular = Invert(C_inv);
+  Serial << "C inverse: " << C_inv << '\n';
 }
 
 unsigned long sampleStartTime = millis();
@@ -310,13 +321,13 @@ void loop() {
     }
   }
   
-  
+  /*
   if((millis() - sampleStartTime) >= sampleTime){
       float result = static_cast<float>(topMeasurment*CONVERSION);
       Serial.print(String(result));
       Serial.print(",");
       sampleStartTime = millis();
     }
-  
+  */
   delay(0);
 }
