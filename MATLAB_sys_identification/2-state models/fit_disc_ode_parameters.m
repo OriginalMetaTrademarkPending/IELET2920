@@ -17,7 +17,9 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time.
-phi_first_guess = [0.99, 0.7, 0.6, 0.9, 20]; 
+phi_first_guess = [0.99, 0.7, 0.6, 0.9]; 
+
+M = linspace(0,30,1000);
 % af, 
 
 % The input signal is defined below. The function is then run with each
@@ -37,7 +39,9 @@ mk(:, 1) = zeros(2, 1);
 
 % Running simulation
 for i = 2:N
-    mk(:, i) = disc_diff_eq(phi_first_guess, mk(:, i-1), u_vec(i-1));
+    for j = 1:1000
+        mk(:, i) = disc_diff_eq(phi_first_guess, mk(:, i-1), u_vec(i-1),M(j));
+    end
 end
 
 % Splitting the results
@@ -63,7 +67,7 @@ m_fatig = mk(2, :);
 % parameters
 type disc_theta_to_ode
 
-phi = optimvar('phi', 5);
+phi = optimvar('phi', 4);
 
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
@@ -88,7 +92,7 @@ disp(sumsq)
 m_est = NaN(2, N);
 m_est(:, 1) = zeros(2, 1);
 for i = 2:N
-    m_est(:, i) = disc_diff_eq(phi_sol.phi, m_est(:, i-1), u_vec(i));
+    m_est(:, i) = disc_diff_eq(phi_sol.phi, m_est(:, i-1), u_vec(i), M);
 end
 m_est_active = m_est(1, :);
 m_est_hidden = m_est(2, :);
