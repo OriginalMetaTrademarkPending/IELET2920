@@ -65,6 +65,7 @@ M = linspace(3, 40, M_size);
 % not need to be adjusted for the sample time.
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 phi_first_guess = [0.3, 0.7, 0.9, 0.3, 20];
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
 =======
@@ -72,6 +73,11 @@ phi_first_guess = [0.9, 0.7, 0.6, 0.9, 20];
 >>>>>>> cbd11b7 (good parameters)
 =======
 phi_first_guess = [0.99, 0.7, 0.6, 0.9, 20]; 
+=======
+phi_first_guess = [0.99, 0.7, 0.6, 0.9]; 
+
+M = linspace(0,30,1000);
+>>>>>>> 6d69de0 (M - changes)
 % af, 
 >>>>>>> 61698af (Circuit and PCB)
 
@@ -98,8 +104,14 @@ for j = 1:M_size
     end
 =======
 for i = 2:N
+<<<<<<< HEAD
     mk(:, i) = disc_diff_eq(phi_first_guess, mk(:, i-1), u_vec(i-1));
 >>>>>>> 4f56570 (Changes in the new estimator, will try to finalize tomorrow)
+=======
+    for j = 1:1000
+        mk(:, i) = disc_diff_eq(phi_first_guess, mk(:, i-1), u_vec(i-1),M(j));
+    end
+>>>>>>> 6d69de0 (M - changes)
 end
 
 % Splitting the results
@@ -126,6 +138,7 @@ end
 % parameters
 type disc_theta_to_ode
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 phi = optimvar('phi', 4);
 
@@ -154,6 +167,9 @@ for i = 1:M_size
     phi_estims(:, i) = phi_sol.phi;
 =======
 phi = optimvar('phi', 5);
+=======
+phi = optimvar('phi', 4);
+>>>>>>> 6d69de0 (M - changes)
 
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
@@ -179,11 +195,15 @@ m_est = NaN(2, N);
 m_est(:, 1) = zeros(2, 1);
 for i = 2:N
 <<<<<<< HEAD
+<<<<<<< HEAD
     m_est(:, i) = disc_diff_eq(m_est(:, i-1), phi_sol.phi, u_vec(i));
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
 =======
     m_est(:, i) = disc_diff_eq(phi_sol.phi, m_est(:, i-1), u_vec(i));
 >>>>>>> 4f56570 (Changes in the new estimator, will try to finalize tomorrow)
+=======
+    m_est(:, i) = disc_diff_eq(phi_sol.phi, m_est(:, i-1), u_vec(i), M);
+>>>>>>> 6d69de0 (M - changes)
 end
 
 [min, min_index] = min(sumsq);
