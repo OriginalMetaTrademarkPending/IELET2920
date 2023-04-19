@@ -1,17 +1,16 @@
 % We start by importing the discretized differential equations (via Forward
 % Euler)
-clear
 type disc_diff_eq
 
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test1.csv";
+FILEPATH = "../../python_scripts/test6.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 N = max(size(y_data));      %Number of samples to be registered
 tspan = 240;                %Time span of the simulation in seconds
-M_size = 50;
+M_size = 30;
 %% INITIALIZING SIMULATION
 t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
 
@@ -20,8 +19,8 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
-phi_first_guess = [0.2, 0.5, 0.9, 0.7]; 
-M = linspace(3, 30, 100);
+phi_first_guess = [0.9989, 0.8874, 0.1982, 0.9992]; 
+M = linspace(0, 30, M_size);
 % af, 
 
 % The input signal is defined below. The function is then run with each
@@ -48,18 +47,18 @@ end
 
 % Splitting the results
 
-% % Plotting the results
-% for i = 1:M_size
-%     figure(1)
-%     hold on
-%     plot(t_vec, mk(1, :, i));
-%     plot(t_vec, mk(2, :, i));
-%     legend("Active Muscle Mass", "Fatigued Muscle Mass");
-%     xlabel("Time (s)")
-%     ylabel("Mass (kg)")
-%     title("Hand Grip Model Simulation")
-% end
-% hold off
+% Plotting the results
+for i = 1:M_size
+    figure(1)
+    hold on
+    plot(t_vec, mk(1, :, i));
+    plot(t_vec, mk(2, :, i));
+    legend("Active Muscle Mass", "Fatigued Muscle Mass");
+    xlabel("Time (s)")
+    ylabel("Mass (kg)")
+    title("Hand Grip Model Simulation")
+end
+hold off
 
 %% LEAST SQUARES ESTIMATION
 % In order to find the theta-parameters, we need to declare them as
@@ -75,7 +74,7 @@ phi = optimvar('phi', 4);
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
 optim_y = optimexpr(1, N);
-sumsq = NaN(1, M_size);
+sumsq = NaN(M_size);
 phi_estims = NaN(M_size, 4);
 
 for i = 1:M_size
@@ -91,9 +90,6 @@ for i = 1:M_size
     [phi_sol, sumsq(i)] = solve(prob, phi_0);
     phi_estims(i, :) = phi_sol.phi;
 end
-
-[min, min_index] = min(sumsq);
-
 %% PLOT ALL RESULTS
 m_est = NaN(2, N, M_size);
 m_est(:, 1, :) = zeros(2, 1, M_size);
@@ -103,16 +99,17 @@ for j = 1:M_size
     end
 end
 
-figure(1)
-hold on
-plot(t_vec, mk(1, :, min_index), '--');
-plot(t_vec, mk(2, :, min_index), '--');
-plot(t_vec, m_est(1, :, min_index));
-plot(t_vec, m_est(2, :, min_index));
+figure(2)
 plot(t_vec, y_data);
 plot(t_vec, u_vec);
-legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass");
-xlabel("Time (s)")
-ylabel("Mass (kg)")
-title("Hand Grip System Identification")
-hold off
+hold on
+for i = 1:M_size
+    plot(t_vec, mk(1, :, i), '--');
+    plot(t_vec, mk(2, :, i), '--');
+    plot(t_vec, m_est(1, :, i));
+    plot(t_vec, m_est(2, :, i));
+    legend("Data", "Input", "Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass");
+    xlabel("Time (s)")
+    ylabel("Mass (kg)")
+    title("Hand Grip System Identification")
+end
