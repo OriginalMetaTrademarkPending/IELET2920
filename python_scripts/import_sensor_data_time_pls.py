@@ -21,6 +21,7 @@ baud = 115200
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 file_name = "python_scripts/test_bias12.csv"
 =======
 file_name = "python_scripts/test1.csv"
@@ -34,6 +35,9 @@ file_name = "python_scripts/Estimate_R.csv"
 =======
 file_name = "python_scripts/Estimate_R_series.csv"
 >>>>>>> d0ba3a8 (estimate R changes)
+=======
+file_name = "python_scripts/Test_movavg_10ms3.csv"
+>>>>>>> 6efd097 (testing moving avarage)
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)
@@ -52,6 +56,7 @@ start_time = process_time()
 print("Data measurement starts now!")
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Take measurements for 3 minutes
 while (process_time() - start_time) < 180.0:
 =======
@@ -62,6 +67,10 @@ while (process_time() - start_time) < 240.0:
 =======
 while (process_time() - start_time) < 180.0:
 >>>>>>> 63c81e0 (estimate of sensor meassurment)
+=======
+# Take measurements for 4 minutes
+while (process_time() - start_time) < 240.0:
+>>>>>>> 6efd097 (testing moving avarage)
     if(ser.inWaiting() > 0):
         sensor_data_str += ser.read(ser.inWaiting()).decode('utf-8')
 
