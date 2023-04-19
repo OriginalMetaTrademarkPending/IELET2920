@@ -21,7 +21,7 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
 phi_first_guess = [0.2, 0.5, 0.9, 0.7]; 
-M = linspace(3, 30, 100);
+M = linspace(3, 50, 1000);
 % af, 
 
 % The input signal is defined below. The function is then run with each
@@ -70,13 +70,12 @@ end
 % parameters
 type disc_theta_to_ode
 
-phi = optimvar('phi', 4);
+phi = optimvar('phi', 4, 'LowerBound', [0, 0, 0, 0]);
 
 % Now, we express this function as an optimization expression.
-%fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
 optim_y = optimexpr(1, N);
 sumsq = NaN(1, M_size);
-phi_estims = NaN(M_size, 4);
+phi_estims = NaN(4, M_size);
 
 for i = 1:M_size
     fcn = fcn2optimexpr(@disc_theta_to_ode, phi, N, u_vec, M(i));
@@ -89,7 +88,7 @@ for i = 1:M_size
     phi_0.phi = phi_first_guess;
     % Solve the optimization problem
     [phi_sol, sumsq(i)] = solve(prob, phi_0);
-    phi_estims(i, :) = phi_sol.phi;
+    phi_estims(:, i) = phi_sol.phi;
 end
 
 [min, min_index] = min(sumsq);
@@ -99,7 +98,7 @@ m_est = NaN(2, N, M_size);
 m_est(:, 1, :) = zeros(2, 1, M_size);
 for j = 1:M_size
     for i = 2:N
-        m_est(:, i, j) = disc_diff_eq(phi_estims(j, :), m_est(:, i-1), u_vec(i), M(j));
+        m_est(:, i, j) = disc_diff_eq(phi_estims(:, j), m_est(:, i-1, j), u_vec(i), M(j));
     end
 end
 
@@ -116,3 +115,5 @@ xlabel("Time (s)")
 ylabel("Mass (kg)")
 title("Hand Grip System Identification")
 hold off
+
+disp(phi_estims(:, min_index))
