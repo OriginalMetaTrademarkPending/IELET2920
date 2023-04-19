@@ -37,7 +37,7 @@ mk(:, 1) = zeros(2, 1);
 
 % Running simulation
 for i = 2:N
-    mk(:, i) = disc_diff_eq(mk(:, i-1), phi_first_guess, u_vec(i-1));
+    mk(:, i) = disc_diff_eq(phi_first_guess, mk(:, i-1), u_vec(i-1));
 end
 
 % Splitting the results
@@ -75,20 +75,6 @@ obj = sum((y_data - optim_y).^2);
 
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);
-
-%% OPTIMIZATION PROBLEM: CONSTRAINTS
-% We find the constraints by performing tr(A)^2 - 4*det(A) on the
-% matrices we get by setting u = 0 and u = 1. First, define these matrices
-% through optimization variables.
-J_0 = [phi(1) - phi(2), 1-phi(4);
-    1 - phi(1), phi(4)];
-
-J_1 = [phi(1) - phi(3), 1 - phi(4) - phi(3);
-    1 - phi(1), phi(4)];
-
-% Now for the big answer!
-%prob.Constraints.cons1 = trace(J_0)^2 <= 4*((J_0(1,1)*J_0(2,2)) - (J_0(1,2)*J_0(2,1)));
-%prob.Constraints.cons2 = trace(J_1)^2 <= 4*((J_1(1,1)*J_1(2,2)) - (J_1(1,2)*J_1(2,1)));
 %% OPTIMIZATION PROBLEM: SOLVE
 % Initial guess on theta
 phi_0.phi = phi_first_guess;
@@ -102,7 +88,7 @@ disp(sumsq)
 m_est = NaN(2, N);
 m_est(:, 1) = zeros(2, 1);
 for i = 2:N
-    m_est(:, i) = disc_diff_eq(m_est(:, i-1), phi_sol.phi, u_vec(i));
+    m_est(:, i) = disc_diff_eq(phi_sol.phi, m_est(:, i-1), u_vec(i));
 end
 m_est_active = m_est(1, :);
 m_est_hidden = m_est(2, :);
