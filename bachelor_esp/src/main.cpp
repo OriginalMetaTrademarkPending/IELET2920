@@ -317,4 +317,6 @@ void loop() {
       Serial.print(",");
       sampleStartTime = millis();
     }
+  
+  delay(0);
 }

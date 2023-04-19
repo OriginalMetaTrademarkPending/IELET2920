@@ -5,7 +5,7 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/Estimate_R.csv";
+FILEPATH = "../../python_scripts/test6.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 N = max(size(y_data));      %Number of samples to be registered

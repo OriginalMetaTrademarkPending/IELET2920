@@ -9,7 +9,7 @@ arduino_port = "COM4"
 baud = 115200
 
 # File name for the .csv file
-file_name = "python_scripts/Estimate_R.csv"
+file_name = "python_scripts/Estimate_R_series.csv"
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)
