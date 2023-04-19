@@ -7,7 +7,7 @@ z = y - H*x_bar;
 S = H*P_bar*H' + R;
 
 % Calculate the Kalman gain for the filter
-K = P_bar*H'*inv(S);
+K = P_bar*H'/S;
 
 % Calculate the estimates and the state covariance matrix
 x_hat = x_bar + (K*z);

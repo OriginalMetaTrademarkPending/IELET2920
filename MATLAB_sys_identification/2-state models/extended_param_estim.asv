@@ -8,7 +8,7 @@ R = cov(r_data);
 % The Q vector is only available as a tuning variable. We have chosen to
 % start with Q = 2.5*R in the diagonal, as well as 0 in the covariance
 % elements.
-Q = 1.2*R*[1, 0; 0, 1];
+Q = 2.5*R*eye(2);
 
 %% MODEL IMPORT
 % We start by importing the discretized differential equations (via Forward
@@ -18,7 +18,7 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test1.csv";
+FILEPATH = "../../python_scripts/test5.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y = readings.Data1';
 N = max(size(y));           %Number of samples to be registered
@@ -30,7 +30,7 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time.
-phi_0 = [0.9989, 0.8874, 0.1982, 0.9992, 13.8220]; 
+phi_0 = [0.99, 0.7, 0.6, 0.9, 20]; 
 % af, 
 
 % The input signal is defined below. The function is then run with each
@@ -81,7 +81,7 @@ P_hat = 100*eye(2);
 x_bar = NaN(2, N);
 P_bar = zeros(2, 2);
 
-z = NaN(2, N);
+z = NaN(1, N);
 
 % Initializing the "optimal" parameters.
 phi_star.phi = phi_0;
@@ -92,7 +92,7 @@ phi_star2.phi = phi_0;
 optim_phi = optimvar('phi', 5, 'LowerBound', [0, 0, 0, 0, 0]);
 
 % Initializing the residual evaluation variable
-residual_limit = NaN(2, N);
+residual_limit = NaN(1, N);
 
 % Values for checking whether the algorithm works or not
 phi_evo = NaN(5, N);
@@ -101,33 +101,25 @@ sumsq_evo = NaN(2, N);
 % Calling in the iterations
 for i = 2:N
     [x_bar(:, i-1), P_bar] = kf_predict(x_hat(:, i-1), P_hat, phi_star.phi, u_vec(i-1), Q);
-    [x_hat(:, i), P_hat, z(:, i-1)] = kf_update(y(i), x_bar(:, i-1), P_bar, H, R);
-    residual_limit(:, i-1) = sqrt([P_hat(1, 1); P_hat(2, 2)])*5;
+    [x_hat(:, i), P_hat, z(i-1)] = kf_update(y(i), x_bar(:, i-1), P_bar, H, R);
+    residual_limit(i-1) = sqrt(P_hat(1, 1))*4;
     %%% WILL WRITE THE ESTIMATOR CODE TOMORROW! %%%
 end
 
 %% PLOT ALL RESULTS
 figure(1)
 hold on
+plot(t_vec, x_hat(1, :));
 plot(t_vec, y);
 plot(t_vec, u_vec);
-plot(t_vec, x_hat(1, :));
-plot(t_vec, x_hat(2, :));
 hold off
-legend("Measurement", "Input", "Estimated Active Mass", "Estimated Fatigued Mass");
+legend("Estimated Active Mass", "Measurement", "Input");
 xlabel("Time (s)")
 ylabel("Mass (kg)")
 title("Hand Grip System Identification")
 
 figure(2)
-plot(t_vec, z(1, :))
+plot(t_vec, z)
 hold on
-plot(t_vec, residual_limit(1, :));
-plot(t_vec, -residual_limit(1, :));
-hold off
-
-figure(3)
-plot(t_vec, z(2, :))
-hold on
-plot(t_vec, residual_limit(2, :));
-plot(t_vec, -residual_limit(2, :));
+plot(t_vec, residual_limit);
+plot(t_vec, -residual_limit);
