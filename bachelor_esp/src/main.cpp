@@ -76,6 +76,10 @@ float gaus_mes[] = {float(bottomReading),measurment_std*measurment_std};
 // pressure test
 const unsigned long sampleTime = 100;
 #define CONVERSION 50.0/4095.0
+#define WIN_SIZE 5
+float filterread[WIN_SIZE];
+int inx = 0;
+float sum = 0.0;
 
 
 float update(float prior[2], float measurment[2], bool returner)  {
@@ -125,6 +129,7 @@ float predict(float posterior[2], float movement[2], bool returner)  {
   return gaus;
 }
 
+float movAvgFilter(float &filterSum, float *window, int &index, const int winSize, int reading);
 
 
 void setup() {
@@ -152,6 +157,7 @@ void setup() {
   process_var = process_var * process_var;
   float process_model[2] = {change,process_var};
 
+  /*
   BLA::Matrix<2,3> A = {1,2,3,4,5,6};
   BLA::Matrix<3,2> B = {10,11,20,21,30,31};
   BLA::Matrix<2,2> C = A*B;
@@ -160,6 +166,7 @@ void setup() {
   // making sure the matrix is not singular
   bool is_nonsingular = Invert(C_inv);
   Serial << "C inverse: " << C_inv << '\n';
+  */
 }
 
 unsigned long sampleStartTime = millis();
@@ -321,13 +328,31 @@ void loop() {
     }
   }
   
-  /*
+  
   if((millis() - sampleStartTime) >= sampleTime){
-      float result = static_cast<float>(topMeasurment*CONVERSION);
-      Serial.print(String(result));
-      Serial.print(",");
-      sampleStartTime = millis();
-    }
-  */
+    //static_cast<float>
+    float filterOutput = (movAvgFilter(sum, filterread, inx, WIN_SIZE,topReading));
+    Serial.print(String(filterOutput));
+    Serial.print(",");
+    sampleStartTime = millis();
+  }
+  
   delay(0);
+}
+
+float movAvgFilter(float &filterSum, float *window, int &index, const int winSize, int reading){
+  filterSum -= window[index];
+  int pressureVal1 = reading;
+  //int pressureVal2 = analogRead(pressurePinMiddle);
+  float valueIndex = static_cast<float>(pressureVal1*CONVERSION);
+  //float valueMiddle = static_cast<float>(pressureVal2*CONVERSION);
+  // Serial.print(String(valueIndex));
+  // Serial.print(",");
+  // Serial.print(String(valueMiddle));
+  // Serial.println();
+  //float value = (valueIndex+valueMiddle)/2;
+  window[index] = valueIndex;
+  filterSum += valueIndex;
+  index = (index+1) % winSize;
+  return filterSum/winSize;
 }
