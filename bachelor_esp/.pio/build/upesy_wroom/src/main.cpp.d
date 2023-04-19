@@ -218,4 +218,8 @@
  .pio/libdeps/upesy_wroom/TFT_eSPI/Fonts/Custom/Yellowtail_32.h \
  .pio/libdeps/upesy_wroom/TFT_eSPI/Extensions/Smooth_font.h \
  .pio/libdeps/upesy_wroom/TFT_eSPI/Extensions/Button.h \
- .pio/libdeps/upesy_wroom/TFT_eSPI/Extensions/Sprite.h
+ .pio/libdeps/upesy_wroom/TFT_eSPI/Extensions/Sprite.h \
+ .pio/libdeps/upesy_wroom/BasicLinearAlgebra/BasicLinearAlgebra.h \
+ .pio/libdeps/upesy_wroom/BasicLinearAlgebra/ElementStorage.h \
+ .pio/libdeps/upesy_wroom/BasicLinearAlgebra/impl/BasicLinearAlgebra.h \
+ .pio/libdeps/upesy_wroom/BasicLinearAlgebra/impl/NotSoBasicLinearAlgebra.h
