@@ -14,6 +14,7 @@ type disc_diff_eq
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
@@ -40,6 +41,9 @@ FILEPATH = "../../python_scripts/test6.csv";
 =======
 FILEPATH = "../../python_scripts/test1.csv";
 >>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
+=======
+FILEPATH = "../../python_scripts/test1.csv";
+>>>>>>> e10bbb0 (New parameter estimation changes)
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
@@ -49,13 +53,18 @@ tspan = 180;                %Time span of the simulation in seconds
 M_size = 100;
 =======
 tspan = 240;                %Time span of the simulation in seconds
+<<<<<<< HEAD
 >>>>>>> 564e173 (Massive changes to code, and perhaps a new success???)
+=======
+M_size = 50;
+>>>>>>> e10bbb0 (New parameter estimation changes)
 %% INITIALIZING SIMULATION
 t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
 
 % Defining the phi parameters. These parameters are defined as the theta
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
+<<<<<<< HEAD
 <<<<<<< HEAD
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
@@ -78,6 +87,12 @@ phi_first_guess = [0.99, 0.7, 0.6, 0.9];
 
 M = linspace(0,30,1000);
 >>>>>>> 6d69de0 (M - changes)
+=======
+% not need to be adjusted for the sample time, but will be included as a
+% family of different parameters.
+phi_first_guess = [0.2, 0.5, 0.9, 0.7]; 
+M = linspace(3, 30, 100);
+>>>>>>> e10bbb0 (New parameter estimation changes)
 % af, 
 >>>>>>> 61698af (Circuit and PCB)
 
@@ -98,6 +113,7 @@ mk(:, 1, :) = zeros(2, 1, M_size);
 
 % Running simulation
 <<<<<<< HEAD
+<<<<<<< HEAD
 for j = 1:M_size
     for i = 2:N
         mk(:, i, j) = disc_diff_eq(phi_first_guess, mk(:, i-1, j), u_vec(i-1), M(j));
@@ -110,6 +126,11 @@ for i = 2:N
 =======
     for j = 1:1000
         mk(:, i) = disc_diff_eq(phi_first_guess, mk(:, i-1), u_vec(i-1),M(j));
+=======
+for j = 1:M_size
+    for i = 2:N
+        mk(:, i, j) = disc_diff_eq(phi_first_guess, mk(:, i-1, j), u_vec(i-1), M(j));
+>>>>>>> e10bbb0 (New parameter estimation changes)
     end
 >>>>>>> 6d69de0 (M - changes)
 end
@@ -173,9 +194,11 @@ phi = optimvar('phi', 4);
 
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
-fcn = fcn2optimexpr(@disc_theta_to_ode, phi, N, u_vec);
-optim_y = fcn(1, :);
+optim_y = optimexpr(1, N);
+sumsq = NaN(1, M_size);
+phi_estims = NaN(M_size, 4);
 
+<<<<<<< HEAD
 % Finally, the objective function can be defined.
 obj = sum((y_data - optim_y).^2);
 
@@ -204,6 +227,20 @@ for i = 2:N
 =======
     m_est(:, i) = disc_diff_eq(phi_sol.phi, m_est(:, i-1), u_vec(i), M);
 >>>>>>> 6d69de0 (M - changes)
+=======
+for i = 1:M_size
+    fcn = fcn2optimexpr(@disc_theta_to_ode, phi, N, u_vec, M(i));
+    optim_y = fcn(1, :);
+    % Finally, the objective function can be defined.
+    obj = sum((y_data - optim_y).^2);
+    % Now, the optimization problem
+    prob = optimproblem("Objective", obj);
+    % Initial guess on theta
+    phi_0.phi = phi_first_guess;
+    % Solve the optimization problem
+    [phi_sol, sumsq(i)] = solve(prob, phi_0);
+    phi_estims(i, :) = phi_sol.phi;
+>>>>>>> e10bbb0 (New parameter estimation changes)
 end
 
 [min, min_index] = min(sumsq);
@@ -213,7 +250,11 @@ m_est = NaN(2, N, M_size);
 m_est(:, 1, :) = zeros(2, 1, M_size);
 for j = 1:M_size
     for i = 2:N
+<<<<<<< HEAD
         m_est(:, i, j) = disc_diff_eq(phi_estims(:, j), m_est(:, i-1, j), u_vec(i), M(j));
+=======
+        m_est(:, i, j) = disc_diff_eq(phi_estims(j, :), m_est(:, i-1), u_vec(i), M(j));
+>>>>>>> e10bbb0 (New parameter estimation changes)
     end
 end
 
@@ -229,8 +270,12 @@ legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Ma
 xlabel("Time (s)")
 ylabel("Mass (kg)")
 title("Hand Grip System Identification")
+<<<<<<< HEAD
 hold off
 
 disp(phi_estims(:, min_index))
 disp(M(min_index))
 disp(sumsq(min_index))
+=======
+hold off
+>>>>>>> e10bbb0 (New parameter estimation changes)
