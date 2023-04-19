@@ -91,8 +91,12 @@ M = linspace(0,30,1000);
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
 phi_first_guess = [0.2, 0.5, 0.9, 0.7]; 
+<<<<<<< HEAD
 M = linspace(3, 30, 100);
 >>>>>>> e10bbb0 (New parameter estimation changes)
+=======
+M = linspace(3, 50, 1000);
+>>>>>>> cd85389 (git playing games)
 % af, 
 >>>>>>> 61698af (Circuit and PCB)
 
@@ -161,6 +165,7 @@ type disc_theta_to_ode
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 phi = optimvar('phi', 4);
 
 % Now, we express this function as an optimization expression.
@@ -194,9 +199,14 @@ phi = optimvar('phi', 4);
 
 % Now, we express this function as an optimization expression.
 %fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
+=======
+phi = optimvar('phi', 4, 'LowerBound', [0, 0, 0, 0]);
+
+% Now, we express this function as an optimization expression.
+>>>>>>> cd85389 (git playing games)
 optim_y = optimexpr(1, N);
 sumsq = NaN(1, M_size);
-phi_estims = NaN(M_size, 4);
+phi_estims = NaN(4, M_size);
 
 <<<<<<< HEAD
 % Finally, the objective function can be defined.
@@ -239,8 +249,12 @@ for i = 1:M_size
     phi_0.phi = phi_first_guess;
     % Solve the optimization problem
     [phi_sol, sumsq(i)] = solve(prob, phi_0);
+<<<<<<< HEAD
     phi_estims(i, :) = phi_sol.phi;
 >>>>>>> e10bbb0 (New parameter estimation changes)
+=======
+    phi_estims(:, i) = phi_sol.phi;
+>>>>>>> cd85389 (git playing games)
 end
 
 [min, min_index] = min(sumsq);
@@ -251,10 +265,14 @@ m_est(:, 1, :) = zeros(2, 1, M_size);
 for j = 1:M_size
     for i = 2:N
 <<<<<<< HEAD
+<<<<<<< HEAD
         m_est(:, i, j) = disc_diff_eq(phi_estims(:, j), m_est(:, i-1, j), u_vec(i), M(j));
 =======
         m_est(:, i, j) = disc_diff_eq(phi_estims(j, :), m_est(:, i-1), u_vec(i), M(j));
 >>>>>>> e10bbb0 (New parameter estimation changes)
+=======
+        m_est(:, i, j) = disc_diff_eq(phi_estims(:, j), m_est(:, i-1, j), u_vec(i), M(j));
+>>>>>>> cd85389 (git playing games)
     end
 end
 
@@ -271,6 +289,7 @@ xlabel("Time (s)")
 ylabel("Mass (kg)")
 title("Hand Grip System Identification")
 <<<<<<< HEAD
+<<<<<<< HEAD
 hold off
 
 disp(phi_estims(:, min_index))
@@ -279,3 +298,8 @@ disp(sumsq(min_index))
 =======
 hold off
 >>>>>>> e10bbb0 (New parameter estimation changes)
+=======
+hold off
+
+disp(phi_estims(:, min_index))
+>>>>>>> cd85389 (git playing games)
