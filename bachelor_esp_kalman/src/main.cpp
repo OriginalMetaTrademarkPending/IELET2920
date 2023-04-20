@@ -17,28 +17,16 @@ const bool displayRaw = false;
 const bool displayFiltered = true;
 
 // make true/false to enable/disable sensors
-const bool botsens = false;
-const bool botmidsens = false;
-const bool topmidsens = false;
 const bool topsens = true;
 
 // Sensorpins
-const int bottomSensorPin = 32;
-const int bottomMiddleSensorPin = 33;
-const int topMiddleSensorPin = 25;
 const int topSensorPin = 26;
 
 // Sensor values
-int bottomReading;
-int bottomMidReading;
-int topMidReading;
 int topReading;
 
 
 // timeline of measurments for display
-int botPixels[4];
-int botMidPixels[4];
-int topMidPixels[4];
 int topPixels[4];
 
 //  current graphing pixel
@@ -58,28 +46,16 @@ int button2Pin = 35;
 float change = 0.;            // expected change between each measurment (model)
 float process_var = 1.;       // variance for process model
 float measurment_std = 4.;    // standard deviation in measurments
-int botMeasurment;
-int botMidMeasurment;
-int topMidMeasurment;
 int topMeasurment;
 
 float prior[2];
-float xBot[] = {0.,100.}; // inital state
-float xBotMid[] = {0.,100.}; // inital state
-float xTopMid[] = {0.,100.}; // inital state
+
 float xTop[] = {0.,100.}; // inital state
 
 float process_model[] = {change,process_var};
 float gaus_mes[] = {float(bottomReading),measurment_std*measurment_std};
 
 
-// pressure test
-const unsigned long sampleTime = 10;
-#define CONVERSION 50.0/4095.0
-#define WIN_SIZE 75
-float filterread[WIN_SIZE];
-int inx = 0;
-float sum = 0.0;
 
 
 float update(float prior[2], float measurment[2], bool returner)  {
@@ -129,53 +105,12 @@ float predict(float posterior[2], float movement[2], bool returner)  {
   return gaus;
 }
 
-float movAvgFilter(float &filterSum, float *window, int &index, const int winSize, int reading);
 
 void readSensors()  {
   if (botsens)    {bottomReading = analogRead(bottomSensorPin);}
   if (botmidsens) {bottomMidReading = analogRead(bottomMiddleSensorPin);}
   if (topmidsens) {topMidReading = analogRead(topMiddleSensorPin);}
   if (topsens)    {topReading = analogRead(topSensorPin);}
-}
-
-void  printSensors()  {
-  if (botsens)    {Serial.println("bottom: " + String(bottomReading));}
-  if (botmidsens) {Serial.println("botmid: " + String(bottomMidReading));}
-  if (topmidsens) {Serial.println("topmid: " + String(topMidReading));}
-  if (topsens)    {Serial.println("top:    " + String(topReading));}
-}
-
-void singleBotKalman() {
-  gaus_mes[0] = float(bottomReading);
-
-    prior[0] = predict(xBot,process_model,true);
-    prior[1] = predict(xBot,process_model,false);
-    xBot[0] = update(prior,gaus_mes,true);
-    xBot[1] = update(prior,gaus_mes,false);
-    
-    botMeasurment = int(round(xBot[0]));
-}
-
-void singleBotMidKalman() {
-  gaus_mes[0] = float(bottomMidReading);
-
-  prior[0] = predict(xBotMid,process_model,true);
-  prior[1] = predict(xBotMid,process_model,false);
-  xBotMid[0] = update(prior,gaus_mes,true);
-  xBotMid[1] = update(prior,gaus_mes,false);
-  
-  botMidMeasurment = int(round(xBotMid[0]));
-}
-
-void singleTopMidKalman() {
-  gaus_mes[0] = float(topMidReading);
-
-  prior[0] = predict(xTopMid,process_model,true);
-  prior[1] = predict(xTopMid,process_model,false);
-  xTopMid[0] = update(prior,gaus_mes,true);
-  xTopMid[1] = update(prior,gaus_mes,false);
-  
-  topMidMeasurment = int(round(xTopMid[0]));
 }
 
 void singleTopKalman()  {
@@ -187,52 +122,6 @@ void singleTopKalman()  {
   xTop[1] = update(prior,gaus_mes,false);
   
   topMeasurment = int(round(xTop[0]));
-}
-
-void botDisplay() {
-  tft.fillCircle(145,15,2,TFT_RED);
-  tft.drawString("reading: " + String(bottomReading) + "                ",150,10);
-  tft.fillCircle(145,25,2,TFT_GREENYELLOW);
-  tft.drawString("fitlter: " + String(botMeasurment) + "             ",150,20);
-
-  if (displayRaw) {
-    botPixels[3] = botPixels[2];
-    botPixels[2] = map(bottomReading, 0, scales[picker],130,1);
-    tft.drawLine(i,botPixels[2],i,botPixels[3],TFT_RED);
-  }
-  if (displayFiltered) {
-    botPixels[1] = botPixels[0];
-    botPixels[0] = map(botMeasurment, 0, scales[picker],130,1);
-    tft.drawLine(i,botPixels[0],i,botPixels[1],TFT_GREENYELLOW);
-  }
-}
-
-void botMidDisplay()  {
-  if (displayRaw) {
-    botMidPixels[3] = botMidPixels[2];
-    botMidPixels[2] = map(bottomMidReading, 0, scales[picker],130,1);
-    tft.drawLine(i,botMidPixels[2],i,botMidPixels[3],TFT_RED);
-  }
-
-  if (displayFiltered) {
-    botMidPixels[1] = botMidPixels[0];
-    botMidPixels[0] = map(botMidMeasurment, 0, scales[picker],130,1);
-    tft.drawLine(i,botMidPixels[0],i,botMidPixels[1],TFT_ORANGE);
-  }
-}
-
-void topMidDisplay()  {
-  if (displayRaw) {
-    topMidPixels[3] = topMidPixels[2];
-    topMidPixels[2] = map(topMidReading, 0, scales[picker],130,1);
-    tft.drawLine(i,topMidPixels[2],i,topMidPixels[3],TFT_RED);
-  }
-
-  if (displayFiltered) {
-    topMidPixels[1] = topMidPixels[0];
-    topMidPixels[0] = map(topMidMeasurment, 0, scales[picker],130,1);
-    tft.drawLine(i,topMidPixels[0],i,topMidPixels[1],TFT_CYAN);
-  }
 }
 
 void topDisplay() {
@@ -292,30 +181,7 @@ void loop() {
   // reading sensors
   readSensors();
   
-  // print raw sensors
-  if (printRaw) {
-    printSensors();
-  }
-
-  
-
-
   // basic kalman
-  //  bottom sensor
-  if (botsens)  {
-    singleBotKalman();
-  }
-
-  //  bottom middle sensor
-  if (botmidsens) {
-    singleBotMidKalman();
-  }
-
-  //  top  middle sensor
-  if (topmidsens) {
-    singleTopMidKalman();
-  }
-
   //  top sensor
   if (topsens)  {
     singleTopKalman();
@@ -347,51 +213,11 @@ void loop() {
   // display the picked scale and the raw and filtered bottomsensor in numbers
   tft.drawString("Scale: " + String(scales[picker]),155,0);
 
-  // bottom sensor
-  if (botsens)  {
-    botDisplay();
-  }
-
-  // bottom middle sensor
-  if (botmidsens) {
-    botMidDisplay();
-  }
-
-  // topmiddle sensor
-  if (topmidsens) {
-    topMidDisplay();
-  }
-
   // top sensor
   if (topsens)  {
     topDisplay();
   }
   
   
-  if((millis() - sampleStartTime) >= sampleTime){
-    //static_cast<float>
-    float filterOutput = (movAvgFilter(sum, filterread, inx, WIN_SIZE,topReading));
-    Serial.print(String(filterOutput));
-    Serial.print(",");
-    sampleStartTime = millis();
-  }
-  
   delay(0);
-}
-
-float movAvgFilter(float &filterSum, float *window, int &index, const int winSize, int reading){
-  filterSum -= window[index];
-  int pressureVal1 = reading;
-  //int pressureVal2 = analogRead(pressurePinMiddle);
-  float valueIndex = static_cast<float>(pressureVal1*CONVERSION);
-  //float valueMiddle = static_cast<float>(pressureVal2*CONVERSION);
-  // Serial.print(String(valueIndex));
-  // Serial.print(",");
-  // Serial.print(String(valueMiddle));
-  // Serial.println();
-  //float value = (valueIndex+valueMiddle)/2;
-  window[index] = valueIndex;
-  filterSum += valueIndex;
-  index = (index+1) % winSize;
-  return filterSum/winSize;
 }
