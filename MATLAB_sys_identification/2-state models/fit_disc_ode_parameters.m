@@ -16,6 +16,7 @@ type disc_diff_eq
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
@@ -48,6 +49,9 @@ FILEPATH = "../../python_scripts/test1.csv";
 =======
 FILEPATH = "../../python_scripts/test_movavg_10ms.csv";
 >>>>>>> a7ffe45 (New changes to parameter estimation)
+=======
+FILEPATH = "../../python_scripts/test_movavg_10ms5.csv";
+>>>>>>> 9b8dcd8 (bigger movavg)
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
