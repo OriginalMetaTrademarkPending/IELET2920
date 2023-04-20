@@ -17,6 +17,7 @@ type disc_diff_eq
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
@@ -52,6 +53,9 @@ FILEPATH = "../../python_scripts/test_movavg_10ms.csv";
 =======
 FILEPATH = "../../python_scripts/test_movavg_10ms5.csv";
 >>>>>>> 9b8dcd8 (bigger movavg)
+=======
+FILEPATH = "../../python_scripts/test_movavg_10ms6.csv";
+>>>>>>> 6ff7809 (functions for arduino code)
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
@@ -80,7 +84,7 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 <<<<<<< HEAD
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
-phi_first_guess = [0.5, 0.5, 0.5, 0.5]; 
+phi_first_guess = [0.9, 0.1, 0.1, 0.9]; 
 M = linspace(3, 40, M_size);
 =======
 % not need to be adjusted for the sample time.
