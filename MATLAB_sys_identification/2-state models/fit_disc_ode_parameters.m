@@ -6,7 +6,7 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test_movavg_10ms5.csv";
+FILEPATH = "../../python_scripts/test_movavg_10ms6.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 N = max(size(y_data));      %Number of samples to be registered
@@ -20,7 +20,7 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
-phi_first_guess = [0.5, 0.5, 0.5, 0.5]; 
+phi_first_guess = [0.9, 0.1, 0.1, 0.9]; 
 M = linspace(3, 40, M_size);
 
 % The input signal is defined below. The function is then run with each

@@ -131,6 +131,123 @@ float predict(float posterior[2], float movement[2], bool returner)  {
 
 float movAvgFilter(float &filterSum, float *window, int &index, const int winSize, int reading);
 
+void readSensors()  {
+  if (botsens)    {bottomReading = analogRead(bottomSensorPin);}
+  if (botmidsens) {bottomMidReading = analogRead(bottomMiddleSensorPin);}
+  if (topmidsens) {topMidReading = analogRead(topMiddleSensorPin);}
+  if (topsens)    {topReading = analogRead(topSensorPin);}
+}
+
+void  printSensors()  {
+  if (botsens)    {Serial.println("bottom: " + String(bottomReading));}
+  if (botmidsens) {Serial.println("botmid: " + String(bottomMidReading));}
+  if (topmidsens) {Serial.println("topmid: " + String(topMidReading));}
+  if (topsens)    {Serial.println("top:    " + String(topReading));}
+}
+
+void singleBotKalman() {
+  gaus_mes[0] = float(bottomReading);
+
+    prior[0] = predict(xBot,process_model,true);
+    prior[1] = predict(xBot,process_model,false);
+    xBot[0] = update(prior,gaus_mes,true);
+    xBot[1] = update(prior,gaus_mes,false);
+    
+    botMeasurment = int(round(xBot[0]));
+}
+
+void singleBotMidKalman() {
+  gaus_mes[0] = float(bottomMidReading);
+
+  prior[0] = predict(xBotMid,process_model,true);
+  prior[1] = predict(xBotMid,process_model,false);
+  xBotMid[0] = update(prior,gaus_mes,true);
+  xBotMid[1] = update(prior,gaus_mes,false);
+  
+  botMidMeasurment = int(round(xBotMid[0]));
+}
+
+void singleTopMidKalman() {
+  gaus_mes[0] = float(topMidReading);
+
+  prior[0] = predict(xTopMid,process_model,true);
+  prior[1] = predict(xTopMid,process_model,false);
+  xTopMid[0] = update(prior,gaus_mes,true);
+  xTopMid[1] = update(prior,gaus_mes,false);
+  
+  topMidMeasurment = int(round(xTopMid[0]));
+}
+
+void singleTopKalman()  {
+  gaus_mes[0] = float(topReading);
+
+  prior[0] = predict(xTop,process_model,true);
+  prior[1] = predict(xTop,process_model,false);
+  xTop[0] = update(prior,gaus_mes,true);
+  xTop[1] = update(prior,gaus_mes,false);
+  
+  topMeasurment = int(round(xTop[0]));
+}
+
+void botDisplay() {
+  tft.fillCircle(145,15,2,TFT_RED);
+  tft.drawString("reading: " + String(bottomReading) + "                ",150,10);
+  tft.fillCircle(145,25,2,TFT_GREENYELLOW);
+  tft.drawString("fitlter: " + String(botMeasurment) + "             ",150,20);
+
+  if (displayRaw) {
+    botPixels[3] = botPixels[2];
+    botPixels[2] = map(bottomReading, 0, scales[picker],130,1);
+    tft.drawLine(i,botPixels[2],i,botPixels[3],TFT_RED);
+  }
+  if (displayFiltered) {
+    botPixels[1] = botPixels[0];
+    botPixels[0] = map(botMeasurment, 0, scales[picker],130,1);
+    tft.drawLine(i,botPixels[0],i,botPixels[1],TFT_GREENYELLOW);
+  }
+}
+
+void botMidDisplay()  {
+  if (displayRaw) {
+    botMidPixels[3] = botMidPixels[2];
+    botMidPixels[2] = map(bottomMidReading, 0, scales[picker],130,1);
+    tft.drawLine(i,botMidPixels[2],i,botMidPixels[3],TFT_RED);
+  }
+
+  if (displayFiltered) {
+    botMidPixels[1] = botMidPixels[0];
+    botMidPixels[0] = map(botMidMeasurment, 0, scales[picker],130,1);
+    tft.drawLine(i,botMidPixels[0],i,botMidPixels[1],TFT_ORANGE);
+  }
+}
+
+void topMidDisplay()  {
+  if (displayRaw) {
+    topMidPixels[3] = topMidPixels[2];
+    topMidPixels[2] = map(topMidReading, 0, scales[picker],130,1);
+    tft.drawLine(i,topMidPixels[2],i,topMidPixels[3],TFT_RED);
+  }
+
+  if (displayFiltered) {
+    topMidPixels[1] = topMidPixels[0];
+    topMidPixels[0] = map(topMidMeasurment, 0, scales[picker],130,1);
+    tft.drawLine(i,topMidPixels[0],i,topMidPixels[1],TFT_CYAN);
+  }
+}
+
+void topDisplay() {
+  if (displayRaw) {
+    topPixels[3] = topPixels[2];
+    topPixels[2] = map(topReading, 0, scales[picker],130,1);
+    tft.drawLine(i,topPixels[2],i,topPixels[3],TFT_RED);
+  }
+
+  if (displayFiltered) {
+    topPixels[1] = topPixels[0];
+    topPixels[0] = map(topMeasurment, 0, scales[picker],130,1);
+    tft.drawLine(i,topPixels[0],i,topPixels[1],TFT_BLUE);
+  }
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -173,17 +290,11 @@ unsigned long sampleStartTime = millis();
 
 void loop() {
   // reading sensors
-  if (botsens)    {bottomReading = analogRead(bottomSensorPin);}
-  if (botmidsens) {bottomMidReading = analogRead(bottomMiddleSensorPin);}
-  if (topmidsens) {topMidReading = analogRead(topMiddleSensorPin);}
-  if (topsens)    {topReading = analogRead(topSensorPin);}
+  readSensors();
   
   // print raw sensors
   if (printRaw) {
-    if (botsens)    {Serial.println("bottom: " + String(bottomReading));}
-    if (botmidsens) {Serial.println("botmid: " + String(bottomMidReading));}
-    if (topmidsens) {Serial.println("topmid: " + String(topMidReading));}
-    if (topsens)    {Serial.println("top:    " + String(topReading));}
+    printSensors();
   }
 
   
@@ -192,50 +303,22 @@ void loop() {
   // basic kalman
   //  bottom sensor
   if (botsens)  {
-    gaus_mes[0] = float(bottomReading);
-
-    prior[0] = predict(xBot,process_model,true);
-    prior[1] = predict(xBot,process_model,false);
-    xBot[0] = update(prior,gaus_mes,true);
-    xBot[1] = update(prior,gaus_mes,false);
-    
-    botMeasurment = int(round(xBot[0]));
+    singleBotKalman();
   }
 
   //  bottom middle sensor
   if (botmidsens) {
-    gaus_mes[0] = float(bottomMidReading);
-
-    prior[0] = predict(xBotMid,process_model,true);
-    prior[1] = predict(xBotMid,process_model,false);
-    xBotMid[0] = update(prior,gaus_mes,true);
-    xBotMid[1] = update(prior,gaus_mes,false);
-    
-    botMidMeasurment = int(round(xBotMid[0]));
+    singleBotMidKalman();
   }
 
   //  top  middle sensor
   if (topmidsens) {
-    gaus_mes[0] = float(topMidReading);
-
-    prior[0] = predict(xTopMid,process_model,true);
-    prior[1] = predict(xTopMid,process_model,false);
-    xTopMid[0] = update(prior,gaus_mes,true);
-    xTopMid[1] = update(prior,gaus_mes,false);
-    
-    topMidMeasurment = int(round(xTopMid[0]));
+    singleTopMidKalman();
   }
 
   //  top sensor
   if (topsens)  {
-    gaus_mes[0] = float(topReading);
-
-    prior[0] = predict(xTop,process_model,true);
-    prior[1] = predict(xTop,process_model,false);
-    xTop[0] = update(prior,gaus_mes,true);
-    xTop[1] = update(prior,gaus_mes,false);
-    
-    topMeasurment = int(round(xTop[0]));
+    singleTopKalman();
   }
 
   
@@ -266,66 +349,22 @@ void loop() {
 
   // bottom sensor
   if (botsens)  {
-  tft.fillCircle(145,15,2,TFT_RED);
-  tft.drawString("reading: " + String(bottomReading) + "                ",150,10);
-  tft.fillCircle(145,25,2,TFT_GREENYELLOW);
-  tft.drawString("fitlter: " + String(botMeasurment) + "             ",150,20);
-  
-    if (displayRaw) {
-      botPixels[3] = botPixels[2];
-      botPixels[2] = map(bottomReading, 0, scales[picker],130,1);
-      tft.drawLine(i,botPixels[2],i,botPixels[3],TFT_RED);
-    }
-    if (displayFiltered) {
-      botPixels[1] = botPixels[0];
-      botPixels[0] = map(botMeasurment, 0, scales[picker],130,1);
-      tft.drawLine(i,botPixels[0],i,botPixels[1],TFT_GREENYELLOW);
-    }
+    botDisplay();
   }
 
   // bottom middle sensor
   if (botmidsens) {
-    if (displayRaw) {
-      botMidPixels[3] = botMidPixels[2];
-      botMidPixels[2] = map(bottomMidReading, 0, scales[picker],130,1);
-      tft.drawLine(i,botMidPixels[2],i,botMidPixels[3],TFT_RED);
-    }
-
-    if (displayFiltered) {
-      botMidPixels[1] = botMidPixels[0];
-      botMidPixels[0] = map(botMidMeasurment, 0, scales[picker],130,1);
-      tft.drawLine(i,botMidPixels[0],i,botMidPixels[1],TFT_ORANGE);
-    }
+    botMidDisplay();
   }
 
   // topmiddle sensor
   if (topmidsens) {
-    if (displayRaw) {
-      topMidPixels[3] = topMidPixels[2];
-      topMidPixels[2] = map(topMidReading, 0, scales[picker],130,1);
-      tft.drawLine(i,topMidPixels[2],i,topMidPixels[3],TFT_RED);
-    }
-
-    if (displayFiltered) {
-      topMidPixels[1] = topMidPixels[0];
-      topMidPixels[0] = map(topMidMeasurment, 0, scales[picker],130,1);
-      tft.drawLine(i,topMidPixels[0],i,topMidPixels[1],TFT_CYAN);
-    }
+    topMidDisplay();
   }
 
   // top sensor
   if (topsens)  {
-    if (displayRaw) {
-      topPixels[3] = topPixels[2];
-      topPixels[2] = map(topReading, 0, scales[picker],130,1);
-      tft.drawLine(i,topPixels[2],i,topPixels[3],TFT_RED);
-    }
-
-    if (displayFiltered) {
-      topPixels[1] = topPixels[0];
-      topPixels[0] = map(topMeasurment, 0, scales[picker],130,1);
-      tft.drawLine(i,topPixels[0],i,topPixels[1],TFT_BLUE);
-    }
+    topDisplay();
   }
   
   
