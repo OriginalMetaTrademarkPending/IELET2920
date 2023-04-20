@@ -76,7 +76,7 @@ float gaus_mes[] = {float(bottomReading),measurment_std*measurment_std};
 // pressure test
 const unsigned long sampleTime = 10;
 #define CONVERSION 50.0/4095.0
-#define WIN_SIZE 5
+#define WIN_SIZE 75
 float filterread[WIN_SIZE];
 int inx = 0;
 float sum = 0.0;
