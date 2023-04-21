@@ -4,6 +4,88 @@
 #include <BasicLinearAlgebra.h>
 using namespace BLA;
 
+
+
+struct KalmanFilter {
+  // Sensor setup
+  int pin;
+  int reading = 0;
+
+  BLA::Matrix<3,3> P = {1.,0.,0.,
+                        0.,1.,0.,
+                        0.,0.,1.};              // variance of prior
+  BLA::Matrix<3,3> P_pred = {1.,0.,0.,
+                        0.,1.,0.,
+                        0.,0.,1.};              // variance of prior
+
+  BLA::Matrix<3,3> F = {1.,0.3,0.,              // unchanged
+                        0.,1.,0.3,
+                        0.,0.,1.};
+
+  BLA::Matrix<3,1> x = {0.,                 
+                        0.01,
+                        0.};              
+  BLA::Matrix<3,1> x_pred = {0.,            
+                        0.01,
+                        0.};                    // mean of prior
+  BLA::Matrix<1,1> y = {0.};                
+  BLA::Matrix<1,1> z = {0.};                
+  BLA::Matrix<3,3> Q = {0.1, 0.001,0.,            
+                        0.001,0.1,0.001,
+                        0.,0.001,0.1};             // variance of movement - unchanged
+  BLA::Matrix<1,1> R = {20.};                    // Variance of measurment - unchanged
+  BLA::Matrix<1,1> S = {1.};            
+  BLA::Matrix<3,1> K = {0.,0.,0.};            
+  BLA::Matrix<1,3> H = {1.0,0.0,0.0};            // unchanged
+  BLA::Matrix<3,3> I = {1.,0.,0.,
+                        0.,1.,0.,
+                        0.,0.,1.};              // unchanged
+  
+
+
+  void read() {
+    reading = analogRead(pin);
+    z = {float(reading)};
+  }
+
+  void predict()  {
+    x_pred = F*x;
+    P_pred = F*P*~F+Q;
+  }
+
+  void update() {
+    S = H*P_pred*~H + R;
+    K = P_pred*~H*Invert(S);
+    y = z - H*x_pred;
+    x = x_pred + K*y;
+    P = (I-K*H)*P_pred;
+  }
+
+  void readPredUpd()  {
+    read();
+    predict();
+    update();
+    /*
+    if (x(0) < 0)  {
+      x(0) = 0;
+    }
+    else if (x(0) > 4095)  {
+      x(0) = 4095;
+    }
+    if (x(1) < -4095) {
+      x(1) = -4095;
+    }
+    else if (x(1) > 4095) {
+      x(1) = 4095;
+    }
+    */
+   
+  }
+};
+
+
+
+
 //screen setup and naming
 TFT_eSPI tft = TFT_eSPI();
 
@@ -18,12 +100,6 @@ const bool displayFiltered = true;
 
 // make true/false to enable/disable sensors
 const bool topsens = true;
-
-// Sensorpins
-const int topSensorPin = 26;
-
-// Sensor values
-int topReading;
 
 
 // timeline of measurments for display
@@ -53,7 +129,7 @@ float prior[2];
 float xTop[] = {0.,100.}; // inital state
 
 float process_model[] = {change,process_var};
-float gaus_mes[] = {float(bottomReading),measurment_std*measurment_std};
+float gaus_mes[] = {float(0),measurment_std*measurment_std};
 
 
 
@@ -106,37 +182,13 @@ float predict(float posterior[2], float movement[2], bool returner)  {
 }
 
 
-void readSensors()  {
-  if (botsens)    {bottomReading = analogRead(bottomSensorPin);}
-  if (botmidsens) {bottomMidReading = analogRead(bottomMiddleSensorPin);}
-  if (topmidsens) {topMidReading = analogRead(topMiddleSensorPin);}
-  if (topsens)    {topReading = analogRead(topSensorPin);}
-}
+void readSensors();
 
-void singleTopKalman()  {
-  gaus_mes[0] = float(topReading);
+void singleTopKalman();
 
-  prior[0] = predict(xTop,process_model,true);
-  prior[1] = predict(xTop,process_model,false);
-  xTop[0] = update(prior,gaus_mes,true);
-  xTop[1] = update(prior,gaus_mes,false);
-  
-  topMeasurment = int(round(xTop[0]));
-}
+void topDisplay();
 
-void topDisplay() {
-  if (displayRaw) {
-    topPixels[3] = topPixels[2];
-    topPixels[2] = map(topReading, 0, scales[picker],130,1);
-    tft.drawLine(i,topPixels[2],i,topPixels[3],TFT_RED);
-  }
-
-  if (displayFiltered) {
-    topPixels[1] = topPixels[0];
-    topPixels[0] = map(topMeasurment, 0, scales[picker],130,1);
-    tft.drawLine(i,topPixels[0],i,topPixels[1],TFT_BLUE);
-  }
-}
+KalmanFilter topSensor;
 
 void setup() {
   // put your setup code here, to run once:
@@ -147,11 +199,10 @@ void setup() {
   tft.fillScreen(TFT_BLACK);
   tft.setTextSize(1);
 
+
+  topSensor.pin = 26;
   // Pinmodes
-  pinMode(bottomSensorPin, INPUT);
-  pinMode(bottomMiddleSensorPin, INPUT);
-  pinMode(topMiddleSensorPin, INPUT);
-  pinMode(topSensorPin, INPUT);
+  pinMode(topSensor.pin, INPUT);
   
   pinMode(button1Pin, INPUT_PULLUP);
   pinMode(button2Pin, INPUT_PULLUP);
@@ -163,6 +214,14 @@ void setup() {
   process_var = process_var * process_var;
   float process_model[2] = {change,process_var};
 
+  topSensor.predict();
+  Serial << "C inverse: " << topSensor.x << '\n';
+  topSensor.predict();
+  Serial << "C inverse: " << topSensor.x << '\n';
+  topSensor.predict();
+  Serial << "C inverse: " << topSensor.x << '\n';
+  topSensor.predict();
+  Serial << "C inverse: " << topSensor.x << '\n';
   /*
   BLA::Matrix<2,3> A = {1,2,3,4,5,6};
   BLA::Matrix<3,2> B = {10,11,20,21,30,31};
@@ -178,6 +237,26 @@ void setup() {
 unsigned long sampleStartTime = millis();
 
 void loop() {
+topSensor.readPredUpd();
+
+Serial.print("x: ");
+Serial.print(topSensor.x(0));
+Serial.print(",z: ");
+Serial.println(topSensor.z(0));
+
+/*
+Serial.println(i);
+Serial << "predicted X value: " << topSensor.x << '\n';
+Serial << "predicted P value: " << topSensor.P << '\n';
+Serial << "predicted P_pred : " << topSensor.P_pred << '\n';
+Serial << "predicted K value: " << topSensor.K << '\n';
+Serial << "predicted S value: " << topSensor.S << '\n';
+i++;
+*/
+delay(20);
+
+
+  /*
   // reading sensors
   readSensors();
   
@@ -220,4 +299,34 @@ void loop() {
   
   
   delay(0);
+  */
+}
+
+void readSensors()  {
+  topSensor.read();
+}
+
+void singleTopKalman()  {
+  gaus_mes[0] = float(topSensor.reading);
+
+  prior[0] = predict(xTop,process_model,true);
+  prior[1] = predict(xTop,process_model,false);
+  xTop[0] = update(prior,gaus_mes,true);
+  xTop[1] = update(prior,gaus_mes,false);
+  
+  topMeasurment = int(round(xTop[0]));
+}
+
+void topDisplay() {
+  if (displayRaw) {
+    topPixels[3] = topPixels[2];
+    topPixels[2] = map(topSensor.reading, 0, scales[picker],130,1);
+    tft.drawLine(i,topPixels[2],i,topPixels[3],TFT_RED);
+  }
+
+  if (displayFiltered) {
+    topPixels[1] = topPixels[0];
+    topPixels[0] = map(topMeasurment, 0, scales[picker],130,1);
+    tft.drawLine(i,topPixels[0],i,topPixels[1],TFT_BLUE);
+  }
 }
