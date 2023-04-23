@@ -1,3 +1,3 @@
 .pio/build/upesy_wroom/FrameworkArduino/esp32-hal-tinyusb.c.o: \
- C:/Users/lorde/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-tinyusb.c \
- C:/Users/lorde/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/config/sdkconfig.h
+ C:/Users/Elias/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-tinyusb.c \
+ C:/Users/Elias/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/qio_qspi/include/sdkconfig.h
