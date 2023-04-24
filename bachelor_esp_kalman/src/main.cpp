@@ -4,65 +4,108 @@
 #include <BasicLinearAlgebra.h>
 using namespace BLA;
 
-
 struct KalmanFilter
 {
   // Sensor setup
   int pin;
   int reading = 0;
-
+  /*
   const float phi_af = 0.9989;
   const float phi_ar = 0.8871;
   const float phi_ra = 0.1978;
   const float phi_fa = 0.9992;
+  */
   const float M = 30.;
 
-  /*
+  
   const float phi_af = 0.9979;
   const float phi_ar = 0.9777;
   const float phi_ra = 0.0589;
   const float phi_fa = 0.9987;
-  */
- struct state {
-  BLA::Matrix<2,1> x = {};
-  BLA::Matrix<2,2> P = {};
-};
+  
 
-BLA::Matrix<2, 2> F = {1., 0.3, // unchanged
-                       0., 1.};
-BLA::Matrix<1, 1> y = {0.};
+  
 
-state& init(){
-  state initialize;
-  initialize.x =  {0.,0.};
-  initialize.P = {1., 0., 0., 1.};
-  return initialize;
-}
+  struct state {
+    BLA::Matrix<2, 2> P = {1., 0., 0., 1.};
+    BLA::Matrix<2, 1> x = {0.,0.};
 
-state& predict(state& estim){
+    void maxpoints() {
+      /*
+      for (int i = 0; i < 4; i++) {
+        if (P(i) > 1E+06)  {
+          P(i) = 1E+06;
+        }
+        else if (P(i) < 1E-06)  {
+          P(i) = 1E-06;
+        }
+        else if (abs(P(i)) < 0.0001)  {
+          P(i) = 0.0001;
+        }
+      }
+      for (int i = 0; i < 2; i++) {
+        if (x(i) > 1E+10)  {
+          x(i) = 1E+10;
+        }
+        else if (x(i) < 1E-10)  {
+          x(i) = 1E-10;
+        }
+        else if (abs(x(i)) < 0.0001)  {
+          x(i) = 0.0001;
+        }
+      }
+      */
+    }
+  };
+
   state prediction;
-  if (z(0) < 0.5)
+  state estimate;
+
+  BLA::Matrix<2, 2> F = {1., 0.0, 
+                          0., 0.};
+
+  BLA::Matrix<1, 1> y = {0.};
+  BLA::Matrix<1, 1> z = {0.};
+  const BLA::Matrix<2, 2> Q = {0.05, 0.1,
+                         0.1, 0.4}; // variance of movement - unchanged
+  const BLA::Matrix<1, 1> R = {0.08};        // Variance of measurement - unchanged
+  BLA::Matrix<1, 1> S = {1.};
+  BLA::Matrix<2, 1> K = {0., 0.};
+  const BLA::Matrix<1, 2> H = {1., 0.0}; // unchanged
+  const BLA::Matrix<2, 1> B = {phi_ra * M,
+                                0};
+  const BLA::Matrix<2, 2> I = {1., 0.,
+                                0., 1.}; // unchanged
+
+  void read()
+  {
+    reading = analogRead(pin);
+    z(0) = {float(reading)};
+  }
+
+  void predict()
+  {
+    if (z(0) == 0.)
     {
       F = {phi_af - phi_ar, 1 - phi_fa,
-           1 - phi_af, phi_fa};
+            1 - phi_af, phi_fa};
 
-      prediction.x = (F * estim.x) ;
+      prediction.x = (F * estimate.x);
     }
     else
     {
       F = {phi_af - phi_ra, 1 - phi_fa - phi_ra,
-           1 - phi_af, phi_fa};
+            1 - phi_af, phi_fa};
 
-      prediction.x = (F * estim.x) + (B);
+      prediction.x = (F * estimate.x) + (B);
     }
-    
-    prediction.P = (F * estim.P * ~F) + (Q);
-    return prediction;
-}
+    prediction.P = (F * estimate.P * ~F) + (Q);
+    prediction.maxpoints();
+  }
 
-state& update(state& prediction){
-  state estimate;
-      // Calculate residual
+  void update()
+  {
+    // Calculate residual
     y = z - H * prediction.x;
 
     // Calculate innovation matrix
@@ -74,33 +117,13 @@ state& update(state& prediction){
     // Calculate the estimates and state covariance matrix
     estimate.x = prediction.x + K * y;
     estimate.P = (I - (K * H)) * prediction.P * ~(I - (K * H)) + (K * R * ~K);
-}
- // variance of prior
- 
-  BLA::Matrix<1, 1> z = {0.};
-  BLA::Matrix<2, 2> Q = {1., 1.5,
-                         1.5, 2.}; // variance of movement - unchanged
-  BLA::Matrix<1, 1> R = {0.5};        // Variance of measurement - unchanged
-  BLA::Matrix<1, 1> S = {1.};
-  BLA::Matrix<2, 1> K = {0., 0.};
-  const BLA::Matrix<1, 2> H = {1.0, 0.0}; // unchanged
-  const BLA::Matrix<2, 1> B = {phi_ra * M,
-                         0};
-  const BLA::Matrix<2, 2> I = {1., 0.,
-                         0., 1.}; // unchanged
-
-  void read()
-  {
-    reading = analogRead(pin);
-    z(0) = {float(reading)};
+    estimate.maxpoints();
   }
-
-
 
   void readPredUpd()
   {
     read();
-    predict(init);
+    predict();
     update();
     /*
     if (x(0) < 0)  {
@@ -148,19 +171,12 @@ int picker = 0;
 int button1Pin = 0;
 int button2Pin = 35;
 
-// Kalman testing
-float change = 0.;          // expected change between each measurement (model)
-float process_var = 1.;     // variance for process model
-float measurement_std = 4.; // standard deviation in measurement
-int topmeasurement;
 
 void readSensors();
 
 void topDisplay();
 
 KalmanFilter topSensor;
-
-
 
 void setup()
 {
@@ -173,7 +189,6 @@ void setup()
   tft.setTextSize(1);
 
   topSensor.pin = 26;
-  KalmanFilter::state topSensor = topSensor.init();
   // Pinmodes
   pinMode(topSensor.pin, INPUT);
 
@@ -185,30 +200,6 @@ void setup()
     Serial.begin(115200);
   }
   Serial.begin(115200);
-
-  // square process var
-  process_var = process_var * process_var;
-  float process_model[2] = {change, process_var};
-  /*
-  topSensor.predict();
-  Serial << "C inverse: " << topSensor.x << '\n';
-  topSensor.predict();
-  Serial << "C inverse: " << topSensor.x << '\n';
-  topSensor.predict();
-  Serial << "C inverse: " << topSensor.x << '\n';
-  topSensor.predict();
-  Serial << "C inverse: " << topSensor.x << '\n';
-  */
-  /*
-  BLA::Matrix<2,3> A = {1,2,3,4,5,6};
-  BLA::Matrix<3,2> B = {10,11,20,21,30,31};
-  BLA::Matrix<2,2> C = A*B;
-  BLA::Matrix<2,2> C_inv = C;
-
-  // making sure the matrix is not singular
-  bool is_nonsingular = Invert(C_inv);
-  Serial << "C inverse: " << C_inv << '\n';
-  */
 }
 
 unsigned long sampleStartTime = millis();
@@ -216,22 +207,24 @@ unsigned long sampleStartTime = millis();
 void loop()
 {
   topSensor.readPredUpd();
-  /*
+  
   Serial.print("x: ");
-  Serial.print(topSensor.x(0));
+  Serial.print(topSensor.estimate.x(0));
   Serial.print(",z: ");
   Serial.println(topSensor.z(0));
-  */
   
+  /*
   Serial.println(i);
-  Serial << "predicted X value: " << topSensor.x << '\n';
-  Serial << "predicted P value: " << topSensor.P << '\n';
-  Serial << "predicted P_pred : " << topSensor.P_pred << '\n';
+  Serial << "predicted Z value: " << topSensor.z << '\n';
+  Serial << "predicted X value: " << topSensor.estimate.x << '\n';
+  Serial << "predicted P value: " << topSensor.estimate.P << '\n';
+  Serial << "predicted P_pred : " << topSensor.prediction.P << '\n';
   Serial << "predicted K value: " << topSensor.K << '\n';
   Serial << "predicted S value: " << topSensor.S << '\n';
   i++;
+  */
   
-  delay(250);
+  delay(20);
 
   /*
   // reading sensors
