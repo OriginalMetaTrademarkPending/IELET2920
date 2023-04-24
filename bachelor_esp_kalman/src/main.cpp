@@ -4,6 +4,7 @@
 #include <BasicLinearAlgebra.h>
 using namespace BLA;
 
+
 struct KalmanFilter
 {
   // Sensor setup
@@ -22,33 +23,70 @@ struct KalmanFilter
   const float phi_ra = 0.0589;
   const float phi_fa = 0.9987;
   */
+ struct state {
+  BLA::Matrix<2,1> x = {};
+  BLA::Matrix<2,2> P = {};
+};
 
-  BLA::Matrix<2, 2>
-      P = {1., 0.,
-           0., 1.}; // variance of prior
-  BLA::Matrix<2, 2> P_pred = {1., 0.,
-                              0., 1.}; // variance of prior
+BLA::Matrix<2, 2> F = {1., 0.3, // unchanged
+                       0., 1.};
+BLA::Matrix<1, 1> y = {0.};
 
-  BLA::Matrix<2, 2> F = {1., 0.3, // unchanged
-                         0., 1.};
+state& init(){
+  state initialize;
+  initialize.x =  {0.,0.};
+  initialize.P = {1., 0., 0., 1.};
+  return initialize;
+}
 
-  BLA::Matrix<2, 1> x = {
-      0.,
-      0.01,
-  };
-  BLA::Matrix<2, 1> x_pred = {0.,
-                              0.01}; // mean of prior
-  BLA::Matrix<1, 1> y = {0.};
+state& predict(state& estim){
+  state prediction;
+  if (z(0) < 0.5)
+    {
+      F = {phi_af - phi_ar, 1 - phi_fa,
+           1 - phi_af, phi_fa};
+
+      prediction.x = (F * estim.x) ;
+    }
+    else
+    {
+      F = {phi_af - phi_ra, 1 - phi_fa - phi_ra,
+           1 - phi_af, phi_fa};
+
+      prediction.x = (F * estim.x) + (B);
+    }
+    
+    prediction.P = (F * estim.P * ~F) + (Q);
+    return prediction;
+}
+
+state& update(state& prediction){
+  state estimate;
+      // Calculate residual
+    y = z - H * prediction.x;
+
+    // Calculate innovation matrix
+    S = H * prediction.P * ~H + R;
+
+    // Calculate the kalman gain
+    K = prediction.P * ~H * Invert(S);
+
+    // Calculate the estimates and state covariance matrix
+    estimate.x = prediction.x + K * y;
+    estimate.P = (I - (K * H)) * prediction.P * ~(I - (K * H)) + (K * R * ~K);
+}
+ // variance of prior
+ 
   BLA::Matrix<1, 1> z = {0.};
-  BLA::Matrix<2, 2> Q = {0.1, 0.001,
-                         0.001, 0.1}; // variance of movement - unchanged
-  BLA::Matrix<1, 1> R = {20.};        // Variance of measurement - unchanged
+  BLA::Matrix<2, 2> Q = {1., 1.5,
+                         1.5, 2.}; // variance of movement - unchanged
+  BLA::Matrix<1, 1> R = {0.5};        // Variance of measurement - unchanged
   BLA::Matrix<1, 1> S = {1.};
   BLA::Matrix<2, 1> K = {0., 0.};
-  BLA::Matrix<1, 2> H = {1.0, 0.0}; // unchanged
-  BLA::Matrix<2, 1> B = {phi_ra * M,
+  const BLA::Matrix<1, 2> H = {1.0, 0.0}; // unchanged
+  const BLA::Matrix<2, 1> B = {phi_ra * M,
                          0};
-  BLA::Matrix<2, 2> I = {1., 0.,
+  const BLA::Matrix<2, 2> I = {1., 0.,
                          0., 1.}; // unchanged
 
   void read()
@@ -57,46 +95,12 @@ struct KalmanFilter
     z(0) = {float(reading)};
   }
 
-  void predict()
-  {
-    if (z(0) == 0.)
-    {
-      F = {phi_af - phi_ar, 1 - phi_fa,
-           1 - phi_af, phi_fa};
 
-      B(0) = 0;
-    }
-    else
-    {
-      F = {phi_af - phi_ra, 1 - phi_fa - phi_ra,
-           1 - phi_af, phi_fa};
-
-      B(0) = phi_ra * M;
-    }
-    x_pred = (F * x) + (B);
-    P_pred = (F * P * ~F) + (Q);
-  }
-
-  void update()
-  {
-    // Calculate residual
-    y = z - H * x_pred;
-
-    // Calculate innovation matrix
-    S = H * P_pred * ~H + R;
-
-    // Calculate the kalman gain
-    K = P_pred * ~H * Invert(S);
-
-    // Calculate the estimates and state covariance matrix
-    x = x_pred + K * y;
-    P = (I - (K * H)) * P_pred * ~(I - (K * H)) + (K * R * ~K);
-  }
 
   void readPredUpd()
   {
     read();
-    predict();
+    predict(init);
     update();
     /*
     if (x(0) < 0)  {
@@ -156,6 +160,8 @@ void topDisplay();
 
 KalmanFilter topSensor;
 
+
+
 void setup()
 {
   // put your setup code here, to run once:
@@ -167,6 +173,7 @@ void setup()
   tft.setTextSize(1);
 
   topSensor.pin = 26;
+  KalmanFilter::state topSensor = topSensor.init();
   // Pinmodes
   pinMode(topSensor.pin, INPUT);
 
@@ -182,7 +189,7 @@ void setup()
   // square process var
   process_var = process_var * process_var;
   float process_model[2] = {change, process_var};
-
+  /*
   topSensor.predict();
   Serial << "C inverse: " << topSensor.x << '\n';
   topSensor.predict();
@@ -191,6 +198,7 @@ void setup()
   Serial << "C inverse: " << topSensor.x << '\n';
   topSensor.predict();
   Serial << "C inverse: " << topSensor.x << '\n';
+  */
   /*
   BLA::Matrix<2,3> A = {1,2,3,4,5,6};
   BLA::Matrix<3,2> B = {10,11,20,21,30,31};
@@ -208,13 +216,13 @@ unsigned long sampleStartTime = millis();
 void loop()
 {
   topSensor.readPredUpd();
-
+  /*
   Serial.print("x: ");
   Serial.print(topSensor.x(0));
   Serial.print(",z: ");
   Serial.println(topSensor.z(0));
-
-  /*
+  */
+  
   Serial.println(i);
   Serial << "predicted X value: " << topSensor.x << '\n';
   Serial << "predicted P value: " << topSensor.P << '\n';
@@ -222,8 +230,8 @@ void loop()
   Serial << "predicted K value: " << topSensor.K << '\n';
   Serial << "predicted S value: " << topSensor.S << '\n';
   i++;
-  */
-  delay(20);
+  
+  delay(250);
 
   /*
   // reading sensors
