@@ -97,20 +97,6 @@ struct KalmanFilter
     read();
     predict();
     update();
-    /*
-    if (x(0) < 0)  {
-      x(0) = 0;
-    }
-    else if (x(0) > 4095)  {
-      x(0) = 4095;
-    }
-    if (x(1) < -4095) {
-      x(1) = -4095;
-    }
-    else if (x(1) > 4095) {
-      x(1) = 4095;
-    }
-    */
   }
 };
 
@@ -142,6 +128,7 @@ int button2Pin = 35;
 void topDisplay();
 
 KalmanFilter topSensor;
+KalmanFilter topMidSensor;
 
 void setup()
 {
@@ -154,17 +141,15 @@ void setup()
   tft.setTextSize(1);
 
   topSensor.pin = 26;
+  topMidSensor.pin = 25;
   
   // Pinmodes
   pinMode(topSensor.pin, INPUT);
+  pinMode(topMidSensor.pin, INPUT);
 
   pinMode(button1Pin, INPUT_PULLUP);
   pinMode(button2Pin, INPUT_PULLUP);
-
-  if (printRaw)
-  {
-    Serial.begin(115200);
-  }
+  
   Serial.begin(115200);
 }
 
@@ -173,11 +158,13 @@ unsigned long sampleStartTime = millis();
 void loop()
 {
   topSensor.readPredUpd();
+  topMidSensor.readPredUpd();
   
-  Serial.print("x: ");
-  Serial.print(topSensor.estimate.x(0));
-  Serial.print(",z: ");
-  Serial.println(topSensor.z(0));
+  Serial.print("x top: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
+  Serial.print("z top: "); Serial.print(topSensor.z(0)); Serial.print("  ");
+  Serial.print("x topMid: "); Serial.print(topMidSensor.estimate.x(0)); Serial.print("  ");
+  Serial.print("z topMid: "); Serial.print(topMidSensor.z(0)); Serial.print("  ");
+  Serial.println("uT");
   
   /*
   // debuggingprinting
