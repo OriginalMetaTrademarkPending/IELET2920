@@ -4,20 +4,24 @@
 #include <BasicLinearAlgebra.h>
 using namespace BLA;
 
+// screen setup and naming
+TFT_eSPI tft = TFT_eSPI();
+
 struct KalmanFilter
 {
   // Sensor setup
   int pin;
   int reading = 0;
+  
+  // phi parameters
   /*
   const float phi_af = 0.9989;
   const float phi_ar = 0.8871;
   const float phi_ra = 0.1978;
   const float phi_fa = 0.9992;
   */
-  const float M = 30.;
 
-  
+  const float M = 30.;
   const float phi_af = 0.9979;
   const float phi_ar = 0.9777;
   const float phi_ra = 0.0589;
@@ -25,57 +29,27 @@ struct KalmanFilter
   
 
   
-
   struct state {
     BLA::Matrix<2, 2> P = {1., 0., 0., 1.};
     BLA::Matrix<2, 1> x = {0.,0.};
-
-    void maxpoints() {
-      /*
-      for (int i = 0; i < 4; i++) {
-        if (P(i) > 1E+06)  {
-          P(i) = 1E+06;
-        }
-        else if (P(i) < 1E-06)  {
-          P(i) = 1E-06;
-        }
-        else if (abs(P(i)) < 0.0001)  {
-          P(i) = 0.0001;
-        }
-      }
-      for (int i = 0; i < 2; i++) {
-        if (x(i) > 1E+10)  {
-          x(i) = 1E+10;
-        }
-        else if (x(i) < 1E-10)  {
-          x(i) = 1E-10;
-        }
-        else if (abs(x(i)) < 0.0001)  {
-          x(i) = 0.0001;
-        }
-      }
-      */
-    }
   };
 
+
+  // initializing matrixes
   state prediction;
   state estimate;
-
-  BLA::Matrix<2, 2> F = {1., 0.0, 
-                          0., 0.};
+  
+  BLA::Matrix<2, 2> F = {1., 0.0, 0., 0.};
 
   BLA::Matrix<1, 1> y = {0.};
   BLA::Matrix<1, 1> z = {0.};
-  const BLA::Matrix<2, 2> Q = {0.05, 0.1,
-                         0.1, 0.4}; // variance of movement - unchanged
-  const BLA::Matrix<1, 1> R = {0.08};        // Variance of measurement - unchanged
   BLA::Matrix<1, 1> S = {1.};
   BLA::Matrix<2, 1> K = {0., 0.};
-  const BLA::Matrix<1, 2> H = {1., 0.0}; // unchanged
-  const BLA::Matrix<2, 1> B = {phi_ra * M,
-                                0};
-  const BLA::Matrix<2, 2> I = {1., 0.,
-                                0., 1.}; // unchanged
+  const BLA::Matrix<2, 2> Q = {0.05, 0.1, 0.1, 0.4};  // variance of movement - unchanged
+  const BLA::Matrix<1, 1> R = {0.08};                 // Variance of measurement - unchanged
+  const BLA::Matrix<1, 2> H = {1., 0.0}; 
+  const BLA::Matrix<2, 1> B = {phi_ra * M, 0};
+  const BLA::Matrix<2, 2> I = {1., 0., 0., 1.}; 
 
   void read()
   {
@@ -100,7 +74,6 @@ struct KalmanFilter
       prediction.x = (F * estimate.x) + (B);
     }
     prediction.P = (F * estimate.P * ~F) + (Q);
-    prediction.maxpoints();
   }
 
   void update()
@@ -117,7 +90,6 @@ struct KalmanFilter
     // Calculate the estimates and state covariance matrix
     estimate.x = prediction.x + K * y;
     estimate.P = (I - (K * H)) * prediction.P * ~(I - (K * H)) + (K * R * ~K);
-    estimate.maxpoints();
   }
 
   void readPredUpd()
@@ -142,14 +114,9 @@ struct KalmanFilter
   }
 };
 
-// screen setup and naming
-TFT_eSPI tft = TFT_eSPI();
-
-// make true to serial write the raw sensorvalues
-const bool printRaw = false;
 
 // make true to display the raw sensordata in red
-const bool displayRaw = false;
+const bool displayRaw = true;
 
 // make false to not display the filtered sensors
 const bool displayFiltered = true;
@@ -172,8 +139,6 @@ int button1Pin = 0;
 int button2Pin = 35;
 
 
-void readSensors();
-
 void topDisplay();
 
 KalmanFilter topSensor;
@@ -189,6 +154,7 @@ void setup()
   tft.setTextSize(1);
 
   topSensor.pin = 26;
+  
   // Pinmodes
   pinMode(topSensor.pin, INPUT);
 
@@ -214,6 +180,7 @@ void loop()
   Serial.println(topSensor.z(0));
   
   /*
+  // debuggingprinting
   Serial.println(i);
   Serial << "predicted Z value: " << topSensor.z << '\n';
   Serial << "predicted X value: " << topSensor.estimate.x << '\n';
@@ -224,19 +191,6 @@ void loop()
   i++;
   */
   
-  delay(20);
-
-  /*
-  // reading sensors
-  readSensors();
-
-  // basic kalman
-  //  top sensor
-  if (topsens)  {
-    singleTopKalman();
-  }
-
-
 
   // grafing
   // change display scale and reset display
@@ -268,13 +222,8 @@ void loop()
   }
 
 
-  delay(0);
-  */
-}
-
-void readSensors()
-{
-  topSensor.read();
+  delay(20);
+  
 }
 
 void topDisplay()
@@ -289,7 +238,7 @@ void topDisplay()
   if (displayFiltered)
   {
     topPixels[1] = topPixels[0];
-    topPixels[0] = map(0, 0, scales[picker], 130, 1);
+    topPixels[0] = map(topSensor.estimate.x(0), 0, scales[picker], 130, 1);
     tft.drawLine(i, topPixels[0], i, topPixels[1], TFT_BLUE);
   }
 }
