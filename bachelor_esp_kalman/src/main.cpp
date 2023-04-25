@@ -7,6 +7,8 @@ using namespace BLA;
 // screen setup and naming
 TFT_eSPI tft = TFT_eSPI();
 
+
+const long sampletime = 20; 
 struct KalmanFilter
 {
   // Sensor setup
@@ -21,7 +23,7 @@ struct KalmanFilter
   const float phi_fa = 0.9992;
   */
 
-  const float M = 30.;
+  const float M = 13.8384;
   const float phi_af = 0.9979;
   const float phi_ar = 0.9777;
   const float phi_ra = 0.0589;
@@ -43,23 +45,27 @@ struct KalmanFilter
 
   BLA::Matrix<1, 1> y = {0.};
   BLA::Matrix<1, 1> z = {0.};
+  BLA::Matrix<1, 1> z_prev = {0.};
   BLA::Matrix<1, 1> S = {1.};
   BLA::Matrix<2, 1> K = {0., 0.};
   const BLA::Matrix<2, 2> Q = {0.05, 0.1, 0.1, 0.4};  // variance of movement - unchanged
-  const BLA::Matrix<1, 1> R = {0.08};                 // Variance of measurement - unchanged
-  const BLA::Matrix<1, 2> H = {1., 0.0}; 
+  const BLA::Matrix<1, 1> R = {0.005};                 // Variance of measurement - unchanged
+  const BLA::Matrix<1, 2> H = {1, 0.0}; 
   const BLA::Matrix<2, 1> B = {phi_ra * M, 0};
   const BLA::Matrix<2, 2> I = {1., 0., 0., 1.}; 
 
   void read()
   {
+    z_prev = z;
     reading = analogRead(pin);
-    z(0) = {float(reading)};
+    z(0) = {static_cast<float>(13.8384*2*reading)/4095};
   }
 
   void predict()
-  {
-    if (z(0) == 0.)
+  { 
+    bool flag = (z(0) - z_prev(0))/sampletime < -1;
+
+    if (flag)
     {
       F = {phi_af - phi_ar, 1 - phi_fa,
             1 - phi_af, phi_fa};
@@ -67,9 +73,9 @@ struct KalmanFilter
       prediction.x = (F * estimate.x);
     }
     else
-    {
+    { 
       F = {phi_af - phi_ra, 1 - phi_fa - phi_ra,
-            1 - phi_af, phi_fa};
+          1 - phi_af, phi_fa};
 
       prediction.x = (F * estimate.x) + (B);
     }
@@ -99,6 +105,9 @@ struct KalmanFilter
     update();
   }
 };
+
+
+
 
 
 // make true to display the raw sensordata in red
@@ -153,17 +162,27 @@ void setup()
   Serial.begin(115200);
 }
 
-unsigned long sampleStartTime = millis();
+unsigned long prevSample = millis();
 
 void loop()
-{
-  topSensor.readPredUpd();
-  topMidSensor.readPredUpd();
+{ 
+  if (millis() - prevSample <= sampletime) {
+    topSensor.readPredUpd();
+    topMidSensor.readPredUpd();
+    prevSample = millis();
+  }
+  
   
   Serial.print("x top: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
-  Serial.print("z top: "); Serial.print(topSensor.z(0)); Serial.print("  ");
-  Serial.print("x topMid: "); Serial.print(topMidSensor.estimate.x(0)); Serial.print("  ");
-  Serial.print("z topMid: "); Serial.print(topMidSensor.z(0)); Serial.print("  ");
+  Serial.print("x musselmasstop: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
+  Serial.print("x pred musselmasstop: "); Serial.print(topSensor.prediction.x(0)); Serial.print("  ");
+  Serial.print("x pred musselmasstop: "); Serial.print(topSensor.prediction.x(1)); Serial.print("  ");
+  //Serial.print("z top: "); Serial.print(topSensor.z(0)); Serial.print("  ");
+  //Serial.print("x topMid: "); Serial.print(topMidSensor.estimate.x(0)); Serial.print("  ");
+  //Serial.print("z topMid: "); Serial.print(topMidSensor.z(0)); Serial.print("  ");
+  //Serial.print("y top: "); Serial.print(topSensor.y(0)); Serial.print("  ");
+  //Serial.print("P top: "); Serial.print(sqrt(topSensor.estimate.P(0))*5); Serial.print("  ");
+  //Serial.print("P bot: "); Serial.print(-sqrt(topSensor.estimate.P(0))*5); Serial.print("  ");
   Serial.println("uT");
   
   /*
@@ -209,7 +228,7 @@ void loop()
   }
 
 
-  delay(20);
+  
   
 }
 
