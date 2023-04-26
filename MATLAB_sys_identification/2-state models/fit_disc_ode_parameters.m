@@ -19,6 +19,7 @@ type disc_diff_eq
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
@@ -66,6 +67,13 @@ y_data = readings.Data1';
 N = max(size(y_data));      %Number of samples to be registered
 <<<<<<< HEAD
 tspan = 180;                %Time span of the simulation in seconds
+=======
+FILEPATH = "../../python_scripts/test_bias2.csv";
+readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
+y_data = readings.top';
+N = max(size(y_data));      %Number of samples to be registered
+tspan = 60;                %Time span of the simulation in seconds
+>>>>>>> dc87003 (test bias1 and 2)
 M_size = 100;
 =======
 tspan = 240;                %Time span of the simulation in seconds
