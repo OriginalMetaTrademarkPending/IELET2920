@@ -147,14 +147,10 @@ void setup()
 
   topSensor.pin = 26;
   topMidSensor.pin = 25;
-  botMidSensor.pin = 33;
-  botSensor.pin = 32;
   
   // Pinmodes
   pinMode(topSensor.pin, INPUT);
   pinMode(topMidSensor.pin, INPUT);
-  pinMode(botMidSensor.pin, INPUT);
-  pinMode(botSensor.pin, INPUT);
 
   pinMode(button1Pin, INPUT_PULLUP);
   pinMode(button2Pin, INPUT_PULLUP);
@@ -169,26 +165,20 @@ void loop()
   if (millis() - prevSample >= sampletime) {
     topSensor.readPredUpd();
     topMidSensor.readPredUpd();
-    botMidSensor.readPredUpd();
-    botSensor.readPredUpd();
     prevSample = millis();
   }
   
   if (millis() - prevSample >= 10) {
-    //Serial.print("x musselmasstop: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
+    Serial.print("x top: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
+    Serial.print("x musselmasstop: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
     //Serial.print("x pred: "); Serial.print(topSensor.prediction.x(0)); Serial.print("  ");
     //Serial.print("x pred musselmasstop: "); Serial.print(topSensor.prediction.x(1)); Serial.print("  ");
+    Serial.print("z top: "); Serial.print(topSensor.z(0)); Serial.print("  ");
+    //Serial.print("x topMid: "); Serial.print(topMidSensor.estimate.x(0)); Serial.print("  ");
+    //Serial.print("z topMid: "); Serial.print(topMidSensor.z(0)); Serial.print("  ");
     //Serial.print("y top: "); Serial.print(topSensor.y(0)); Serial.print("  ");
     //Serial.print("P top: "); Serial.print(sqrt(topSensor.estimate.P(0))*5); Serial.print("  ");
     //Serial.print("P bot: "); Serial.print(-sqrt(topSensor.estimate.P(0))*5); Serial.print("  ");
-    Serial.print("x_top: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
-    Serial.print("z_top: "); Serial.print(topSensor.z(0)); Serial.print("  ");
-    Serial.print("x_topMid: "); Serial.print(topMidSensor.estimate.x(0)); Serial.print("  ");
-    Serial.print("z_topMid: "); Serial.print(topMidSensor.z(0)); Serial.print("  ");
-    Serial.print("x_botMid: "); Serial.print(botMidSensor.estimate.x(0)); Serial.print("  ");
-    Serial.print("z_botMid: "); Serial.print(botMidSensor.z(0)); Serial.print("  ");
-    Serial.print("x_bot: "); Serial.print(botSensor.estimate.x(0)); Serial.print("  ");
-    Serial.print("z_bot: "); Serial.print(botSensor.z(0)); Serial.print("  ");
     Serial.println("uT");
   }
   
@@ -203,7 +193,6 @@ void loop()
   Serial << "predicted S value: " << topSensor.S << '\n';
   i++;
   */
- 
   if (digitalRead(button1Pin) == 0) {
     topSensor.estimate.x(1) = 0;
     topSensor.prediction.x(1) = 0;
@@ -238,11 +227,10 @@ void loop()
     topDisplay();
   }
 
-  
+
   
   
 }
-
 
 void topDisplay()
 {
@@ -260,4 +248,3 @@ void topDisplay()
     tft.drawLine(i, topPixels[0], i, topPixels[1], TFT_BLUE);
   }
 }
-
