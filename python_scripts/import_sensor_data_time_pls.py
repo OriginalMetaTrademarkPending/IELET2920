@@ -8,7 +8,7 @@ arduino_port = "COM4"
 baud = 115200
 
 # File name for the .csv file
-file_name = "python_scripts/test3.csv"
+file_name = "python_scripts/test.csv"
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)
@@ -27,15 +27,15 @@ start_time = process_time()
 print("Data measurement starts now!")
 
 # Take measurements for 3 minutes
-while (process_time() - start_time) < 120.0:
+while (process_time() - start_time) < 60.0:
     if(ser.inWaiting() > 0):
         sensor_data_str += ser.read(ser.inWaiting()).decode('utf-8')
 
 print("Measurement complete")
 
 with open(file_name, 'w', encoding='UTF8') as f:
-    f.write("Data1\n")
-    f.write(sensor_data_str.replace(",", "\n"))
+    f.write("top, topMid, botMid, bot\n")
+    f.write(sensor_data_str.replace(";", "\n"))
 
 print("CSV file complete")
 file.close()
