@@ -8,7 +8,9 @@ using namespace BLA;
 TFT_eSPI tft = TFT_eSPI();
 
 
-const long sampletime = 20; 
+const long sampletime = 5; 
+const long samplePrintTime = 10;
+
 struct KalmanFilter
 {
   // Sensor setup
@@ -51,7 +53,7 @@ struct KalmanFilter
   {
     z_prev = z;
     reading = analogRead(pin);
-    z(0) = {static_cast<float>(13.8384*2*reading)/4095};
+    z(0) = {static_cast<float>(13.8384*reading)/4095};
   }
 
   void predict()
@@ -79,17 +81,17 @@ struct KalmanFilter
   void update()
   {
     // Calculate residual
-    y = z - H * prediction.x;
+    y = z - (H * prediction.x);
 
     // Calculate innovation matrix
-    S = H * prediction.P * ~H + R;
+    S = (H * prediction.P * ~H) + R;
 
     // Calculate the kalman gain
-    K = prediction.P * ~H * Invert(S);
+    K = (prediction.P * ~H) * Invert(S);
 
     // Calculate the estimates and state covariance matrix
-    estimate.x = prediction.x + K * y;
-    estimate.P = (I - (K * H)) * prediction.P * ~(I - (K * H)) + (K * R * ~K);
+    estimate.x = prediction.x + (K * y);
+    estimate.P = (I - (K * H)) * prediction.P * ~(I - (K * H)) + ((K * R) * ~K);
   }
 
   void readPredUpd()
@@ -162,10 +164,12 @@ void setup()
   Serial.begin(115200);
 }
 
+unsigned long prevprint = millis();
 unsigned long prevSample = millis();
+unsigned long sampleStartTime = millis();
 
 void loop()
-{ 
+{ // readings and predictions
   if (millis() - prevSample >= sampletime) {
     topSensor.readPredUpd();
     topMidSensor.readPredUpd();
@@ -174,23 +178,43 @@ void loop()
     prevSample = millis();
   }
   
-  if (millis() - prevSample >= 10) {
+  
+  // print for datacollection
+  if((millis() - sampleStartTime) >= samplePrintTime){
+    //static_cast<float>
+    Serial.print(String(static_cast<float>(topSensor.estimate.x(0))));
+    Serial.print(",");
+    Serial.print(String(static_cast<float>(topMidSensor.estimate.x(0))));
+    Serial.print(",");
+    Serial.print(String(static_cast<float>(botMidSensor.estimate.x(0))));
+    Serial.print(",");
+    Serial.print(String(static_cast<float>(botSensor.estimate.x(0))));
+    Serial.print(";");
+    sampleStartTime = millis();
+  }
+  
+
+
+
+  /*
+  if (millis() - prevprint >= 20) {
     //Serial.print("x musselmasstop: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
     //Serial.print("x pred: "); Serial.print(topSensor.prediction.x(0)); Serial.print("  ");
-    //Serial.print("x pred musselmasstop: "); Serial.print(topSensor.prediction.x(1)); Serial.print("  ");
+    Serial.print("x pred musselmasstop: "); Serial.print(topSensor.prediction.x(1)); Serial.print("  ");
     //Serial.print("y top: "); Serial.print(topSensor.y(0)); Serial.print("  ");
     //Serial.print("P top: "); Serial.print(sqrt(topSensor.estimate.P(0))*5); Serial.print("  ");
     //Serial.print("P bot: "); Serial.print(-sqrt(topSensor.estimate.P(0))*5); Serial.print("  ");
     Serial.print("x_top: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
     Serial.print("z_top: "); Serial.print(topSensor.z(0)); Serial.print("  ");
-    Serial.print("x_topMid: "); Serial.print(topMidSensor.estimate.x(0)); Serial.print("  ");
-    Serial.print("z_topMid: "); Serial.print(topMidSensor.z(0)); Serial.print("  ");
-    Serial.print("x_botMid: "); Serial.print(botMidSensor.estimate.x(0)); Serial.print("  ");
-    Serial.print("z_botMid: "); Serial.print(botMidSensor.z(0)); Serial.print("  ");
-    Serial.print("x_bot: "); Serial.print(botSensor.estimate.x(0)); Serial.print("  ");
-    Serial.print("z_bot: "); Serial.print(botSensor.z(0)); Serial.print("  ");
+    //Serial.print("x_topMid: "); Serial.print(topMidSensor.estimate.x(0)); Serial.print("  ");
+    //Serial.print("z_topMid: "); Serial.print(topMidSensor.z(0)); Serial.print("  ");
+    //Serial.print("x_botMid: "); Serial.print(botMidSensor.estimate.x(0)); Serial.print("  ");
+    //Serial.print("z_botMid: "); Serial.print(botMidSensor.z(0)); Serial.print("  ");
+    //Serial.print("x_bot: "); Serial.print(botSensor.estimate.x(0)); Serial.print("  ");
+    //Serial.print("z_bot: "); Serial.print(botSensor.z(0)); Serial.print("  ");
     Serial.println("uT");
-  }
+    prevprint = millis();
+  }*/
   
   /*
   // debuggingprinting
