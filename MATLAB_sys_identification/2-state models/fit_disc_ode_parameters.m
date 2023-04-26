@@ -6,11 +6,11 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test1.csv";
+FILEPATH = "../../python_scripts/test_bias2.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
-y_data = readings.Data1';
+y_data = readings.top';
 N = max(size(y_data));      %Number of samples to be registered
-tspan = 240;                %Time span of the simulation in seconds
+tspan = 60;                %Time span of the simulation in seconds
 M_size = 100;
 %% INITIALIZING SIMULATION
 t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
