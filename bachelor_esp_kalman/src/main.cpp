@@ -117,6 +117,9 @@ const bool topsens = true;
 
 // timeline of measurement for display
 int topPixels[4];
+int topMidPixels[4];
+int botMidPixels[4];
+int botPixels[4];
 
 //  current graphing pixel
 int i = 0;
@@ -245,21 +248,24 @@ void loop()
     }
   }
 
+  if (millis() - prevprint >= 20) {
+    // scrolling thru screen
+    i++;
+    if (i > 241)  {
+      i = 0;
+      tft.fillScreen(TFT_BLACK);
+    }
 
-  // scrolling thru screen
-  i++;
-  if (i > 241)  {
-    i = 0;
-    tft.fillScreen(TFT_BLACK);
-  }
 
+    // display the picked scale and the raw and filtered bottomsensor in numbers
+    tft.drawString("Scale: " + String(scales[picker]),155,0);
 
-  // display the picked scale and the raw and filtered bottomsensor in numbers
-  tft.drawString("Scale: " + String(scales[picker]),155,0);
-
-  // top sensor
-  if (topsens)  {
-    topDisplay();
+    // top sensor
+    
+    if (topsens)  {
+      topDisplay();
+    }
+    prevprint = millis();
   }
 
   
@@ -270,18 +276,20 @@ void loop()
 
 void topDisplay()
 {
-  if (displayRaw)
-  {
-    topPixels[3] = topPixels[2];
-    topPixels[2] = map(topSensor.reading, 0, scales[picker], 130, 1);
-    tft.drawLine(i, topPixels[2], i, topPixels[3], TFT_RED);
-  }
-
   if (displayFiltered)
   {
     topPixels[1] = topPixels[0];
-    topPixels[0] = map(topSensor.estimate.x(0), 0, scales[picker], 130, 1);
+    topPixels[0] = map((4095*topSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
     tft.drawLine(i, topPixels[0], i, topPixels[1], TFT_BLUE);
+    topMidPixels[1] = topMidPixels[0];
+    topMidPixels[0] = map((4095*topMidSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
+    tft.drawLine(i, topMidPixels[0], i, topMidPixels[1], TFT_GREENYELLOW);
+    botMidPixels[1] = botMidPixels[0];
+    botMidPixels[0] = map((4095*botMidSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
+    tft.drawLine(i, botMidPixels[0], i, botMidPixels[1], TFT_ORANGE);
+    botPixels[1] = botPixels[0];
+    botPixels[0] = map((4095*botSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
+    tft.drawLine(i, botPixels[0], i, botPixels[1], TFT_RED);
   }
 }
 
