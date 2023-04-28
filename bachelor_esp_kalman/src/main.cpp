@@ -150,6 +150,7 @@ void setup()
   tft.fillScreen(TFT_BLACK);
   tft.setTextSize(1);
 
+  // Pin assignment
   topSensor.pin = 26;
   topMidSensor.pin = 25;
   botMidSensor.pin = 33;
