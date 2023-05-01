@@ -2,14 +2,14 @@ import serial
 from time import process_time
 
 # Defining the Arduino port
-#arduino_port = "COM4"
-arduino_port = "/dev/cu.wchusbserial54750076121"
+arduino_port = "COM4"
+#arduino_port = "/dev/cu.wchusbserial54750076121"
 
 # Baud rate
 baud = 115200
 
 # File name for the .csv file
-file_name = "python_scripts/test_bias8.csv"
+file_name = "python_scripts/test_bias11.csv"
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)
@@ -28,7 +28,7 @@ start_time = process_time()
 print("Data measurement starts now!")
 
 # Take measurements for 3 minutes
-while (process_time() - start_time) < 180.0:
+while (process_time() - start_time) < 120.0:
     if(ser.inWaiting() > 0):
         sensor_data_str += ser.read(ser.inWaiting()).decode('utf-8')
 
