@@ -60,6 +60,7 @@ struct KalmanFilter
   { 
     bool flagDer = (z(0) - z_prev(0))/sampletime > -10;
     bool flagLow = z(0) > 0.5;
+    float last_pred = 0;
 
     if (flagDer and flagLow)
     {
@@ -73,7 +74,12 @@ struct KalmanFilter
       F = {phi_af - phi_ar, 1 - phi_fa,
             1 - phi_af, phi_fa};
 
+      last_pred = prediction.x(1);
       prediction.x = (F * estimate.x);
+      if (last_pred < prediction.x(1))  {
+        prediction.x(1) = last_pred;
+      }
+      
     }
     prediction.P = (F * estimate.P * ~F) + (Q);
   }
@@ -202,20 +208,9 @@ void loop()
 
   /*
   if (millis() - prevprint >= 20) {
-    //Serial.print("x musselmasstop: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
-    //Serial.print("x pred: "); Serial.print(topSensor.prediction.x(0)); Serial.print("  ");
-    Serial.print("x pred musselmasstop: "); Serial.print(topSensor.prediction.x(1)); Serial.print("  ");
-    //Serial.print("y top: "); Serial.print(topSensor.y(0)); Serial.print("  ");
-    //Serial.print("P top: "); Serial.print(sqrt(topSensor.estimate.P(0))*5); Serial.print("  ");
-    //Serial.print("P bot: "); Serial.print(-sqrt(topSensor.estimate.P(0))*5); Serial.print("  ");
-    Serial.print("x_top: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
-    Serial.print("z_top: "); Serial.print(topSensor.z(0)); Serial.print("  ");
-    //Serial.print("x_topMid: "); Serial.print(topMidSensor.estimate.x(0)); Serial.print("  ");
-    //Serial.print("z_topMid: "); Serial.print(topMidSensor.z(0)); Serial.print("  ");
-    //Serial.print("x_botMid: "); Serial.print(botMidSensor.estimate.x(0)); Serial.print("  ");
-    //Serial.print("z_botMid: "); Serial.print(botMidSensor.z(0)); Serial.print("  ");
-    //Serial.print("x_bot: "); Serial.print(botSensor.estimate.x(0)); Serial.print("  ");
-    //Serial.print("z_bot: "); Serial.print(botSensor.z(0)); Serial.print("  ");
+    Serial.print("x musselmasstop: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
+    Serial.print("x est: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
+    Serial.print("z: "); Serial.print(topSensor.estimate.z(0)); Serial.print("  ");
     Serial.println("uT");
     prevprint = millis();
   }*/
