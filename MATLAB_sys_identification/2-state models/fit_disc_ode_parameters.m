@@ -6,14 +6,14 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test_bias2.csv";
+FILEPATH = "../../python_scripts/Test_movavg_10ms6.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
-y_data = readings.top';
+y_data = readings.Data1';
 N = max(size(y_data));      %Number of samples to be registered
-tspan = 60;                %Time span of the simulation in seconds
+tspan = 300;                 %Time span of the simulation in seconds
 M_size = 100;
 %% INITIALIZING SIMULATION
-t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
+t_vec = linspace(0, tspan, N)%Time vector for plotting and input generation
 
 % Defining the phi parameters. These parameters are defined as the theta
 % parameters adjusted for the sample time. These parameters must be within
@@ -44,8 +44,6 @@ for j = 1:M_size
         mk(:, i, j) = disc_diff_eq(phi_first_guess, mk(:, i-1, j), u_vec(i-1), M(j));
     end
 end
-
-% Splitting the results
 
 % % Plotting the results
 % for i = 1:M_size
@@ -83,6 +81,10 @@ for i = 1:M_size
     obj = sum((y_data - optim_y).^2);
     % Now, the optimization problem
     prob = optimproblem("Objective", obj);
+    prob.Constraints.cons1 = phi(4) + phi(2) - phi(1) + (M(i)*phi(3)) >= 0.00001;
+    prob.Constraints.cons2 = (M(i)*phi(3)*phi(4)) + phi(1) + phi(4) - (2*phi(1)*phi(4)) + (phi(4)*phi(2)) >= 1.00001;
+    prob.Constraints.cons3 = phi(3) + phi(4) - phi(1) + (M(i)*phi(3)) >= 0.00001;
+    prob.Constraints.cons4 = (M(i)*phi(3)*phi(4)) + phi(1) + phi(4) + phi(3) - (2*phi(1)*phi(4)) - (phi(1)*phi(3)) + (phi(4)*phi(3)) >= 1.00001;
     % Initial guess on theta
     phi_0.phi = phi_first_guess;
     % Solve the optimization problem
@@ -117,3 +119,4 @@ hold off
 
 disp(phi_estims(:, min_index))
 disp(M(min_index))
+disp(min);
