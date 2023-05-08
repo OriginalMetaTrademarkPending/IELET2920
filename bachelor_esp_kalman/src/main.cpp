@@ -45,8 +45,8 @@ struct KalmanFilter
   BLA::Matrix<2, 1> K = {0., 0.};
   const BLA::Matrix<2, 2> Q = {0.05, 0.1, 0.1, 0.4};  // variance of movement - unchanged
   const BLA::Matrix<1, 1> R = {0.005};                 // Variance of measurement - unchanged
-  const BLA::Matrix<1, 2> H = {1, 0.0}; 
-  const BLA::Matrix<2, 1> B = {phi_ra * M, 0};
+  const BLA::Matrix<1, 2> H = {1., 0.0}; 
+  BLA::Matrix<2, 1> B = {phi_ra * M, 0};
   const BLA::Matrix<2, 2> I = {1., 0., 0., 1.}; 
 
   void read()
@@ -59,14 +59,14 @@ struct KalmanFilter
   void predict()
   { 
     bool flagDer = (z(0) - z_prev(0))/sampletime > -10;
-    bool flagLow = z(0) > 0.5;
-    float last_pred = 0;
+    bool flagLow = z(0) > 0.1;
+    float last_pred = 0.;
 
     if (flagDer and flagLow)
     {
       F = {phi_af - phi_ra, 1 - phi_fa - phi_ra,
           1 - phi_af, phi_fa};
-
+      
       prediction.x = (F * estimate.x) + (B);
     }
     else
@@ -76,6 +76,7 @@ struct KalmanFilter
 
       last_pred = prediction.x(1);
       prediction.x = (F * estimate.x);
+      
       if (last_pred < prediction.x(1))  {
         prediction.x(1) = last_pred;
       }
@@ -188,7 +189,7 @@ void loop()
     prevSample = millis();
   }
   
-  
+  /*
   // print for datacollection
   if((millis() - sampleStartTime) >= samplePrintTime){
     //static_cast<float>
@@ -202,30 +203,27 @@ void loop()
     Serial.print(";");
     sampleStartTime = millis();
   }
-  
-
-
-
-  /*
-  if (millis() - prevprint >= 20) {
-    Serial.print("x musselmasstop: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
-    Serial.print("x est: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
-    Serial.print("z: "); Serial.print(topSensor.estimate.z(0)); Serial.print("  ");
-    Serial.println("uT");
-    prevprint = millis();
-  }*/
-  
-  /*
-  // debuggingprinting
-  Serial.println(i);
-  Serial << "predicted Z value: " << topSensor.z << '\n';
-  Serial << "predicted X value: " << topSensor.estimate.x << '\n';
-  Serial << "predicted P value: " << topSensor.estimate.P << '\n';
-  Serial << "predicted P_pred : " << topSensor.prediction.P << '\n';
-  Serial << "predicted K value: " << topSensor.K << '\n';
-  Serial << "predicted S value: " << topSensor.S << '\n';
-  i++;
   */
+
+
+
+
+  if (millis() - prevprint >= 20) {
+    if (picker == 0 or picker == 3)  {
+      Serial.print("x musselmasstop: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
+      Serial.print("x est: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
+      Serial.print("z: "); Serial.print(topSensor.z(0)); Serial.print("  ");
+    }
+    if (picker == 1 or picker == 3)  {
+      Serial.print("y: "); Serial.print(topSensor.y(0)); Serial.print("  ");
+      Serial.print("P: "); Serial.print(sqrt(topSensor.estimate.P(0))*3); Serial.print("  ");
+      Serial.print("P neg: "); Serial.print(-sqrt(topSensor.estimate.P(0))*3); Serial.print("  ");
+    }
+    Serial.println("uT");
+    
+    prevprint = millis();
+  }
+  
  
   if (digitalRead(button1Pin) == 0) {
     topSensor.estimate.x(1) = 0;
