@@ -6,11 +6,11 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/test_bias10.csv";
+FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
-y_data = readings.botMid';
+y_data = readings.topMid';
 N = max(size(y_data));      %Number of samples to be registered
-tspan = 120;                %Time span of the simulation in seconds
+tspan = 180;                %Time span of the simulation in seconds
 M_size = 100;
 %% INITIALIZING SIMULATION
 t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
@@ -20,7 +20,7 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
-phi_first_guess = [0.9, 0.1, 0.1, 0.9]; 
+phi_first_guess = [0.5, 0.5, 0.5, 0.5]; 
 M = linspace(3, 40, M_size);
 
 % The input signal is defined below. The function is then run with each
@@ -69,7 +69,7 @@ end
 % parameters
 type disc_theta_to_ode
 
-phi = optimvar('phi', 4, 'LowerBound', [0, 0, 0, 0], 'UpperBound', [1, 1, 1, 1]);
+phi = optimvar('phi', 4);
 
 % Now, we express this function as an optimization expression.
 optim_y = optimexpr(1, N);
@@ -77,16 +77,22 @@ sumsq = NaN(1, M_size);
 phi_estims = NaN(4, M_size);
 
 for i = 1:M_size
+    fprintf("Problem %i", i);
     fcn = fcn2optimexpr(@disc_theta_to_ode, phi, N, u_vec, M(i));
     optim_y = fcn;
     % Finally, the objective function can be defined.
     obj = sum((y_data - optim_y).^2);
     % Now, the optimization problem
+    opts = optimoptions(@fmincon, "MaxFunEvals", 9e3);
     prob = optimproblem("Objective", obj);
+    prob.Constraints.cons1 = -phi(1) + phi(4) + phi(2) + (M(i)*phi(3)) >= 0.0001;
+    prob.Constraints.cons2 = phi(1) + phi(4) - (2*phi(1)*phi(4)) + (phi(4)*phi(2)) + (M(i)*phi(4)*phi(3)) >= 1.0001;
+    prob.Constraints.cons3 = -phi(1) + phi(4) + phi(3) + (M(i)*phi(3)) >= 0.0001;
+    prob.Constraints.cons4 = phi(1) + phi(4) - (2*phi(1)*phi(4)) - (phi(1)*phi(3)) + (phi(4)*phi(3)) + (M(i)*phi(4)*phi(3)) >= 1.0001;
     % Initial guess on theta
     phi_0.phi = phi_first_guess;
     % Solve the optimization problem
-    [phi_sol, sumsq(i)] = solve(prob, phi_0);
+    [phi_sol, sumsq(i)] = solve(prob, phi_0, 'Options', opts);
     phi_estims(:, i) = phi_sol.phi;
 end
 
