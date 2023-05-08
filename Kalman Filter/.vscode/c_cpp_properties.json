@@ -1,0 +1,56 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/Kalman Filter/include",
+                "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/Kalman Filter/src",
+                "/Users/admir/.platformio/packages/framework-arduino-avr/cores/arduino",
+                "/Users/admir/.platformio/packages/framework-arduino-avr/variants/standard",
+                "/Users/admir/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                "/Users/admir/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                "/Users/admir/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                "/Users/admir/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                "/Users/admir/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/Kalman Filter/include",
+                    "/Users/admir/Desktop/BIELEKTRO/3. år/IELET2920 Bacheloroppgave automatisering/github-repo/IELET2920/Kalman Filter/src",
+                    "/Users/admir/.platformio/packages/framework-arduino-avr/cores/arduino",
+                    "/Users/admir/.platformio/packages/framework-arduino-avr/variants/standard",
+                    "/Users/admir/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                    "/Users/admir/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                    "/Users/admir/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                    "/Users/admir/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                    "/Users/admir/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60106",
+                "ARDUINO_AVR_UNO",
+                "F_CPU=16000000L",
+                "ARDUINO_ARCH_AVR",
+                "ARDUINO=10808",
+                "__AVR_ATmega328P__",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "/Users/admir/.platformio/packages/toolchain-atmelavr@1.70300.191015/bin/avr-gcc",
+            "compilerArgs": [
+                "-mmcu=atmega328p",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
