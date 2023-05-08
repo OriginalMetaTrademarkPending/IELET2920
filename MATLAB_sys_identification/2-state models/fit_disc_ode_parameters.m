@@ -13,7 +13,7 @@ N = max(size(y_data));      %Number of samples to be registered
 tspan = 180;                %Time span of the simulation in seconds
 M_size = 100;
 %% INITIALIZING SIMULATION
-t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
+t_vec = linspace(0, tspan, N)%Time vector for plotting and input generation
 
 % Defining the phi parameters. These parameters are defined as the theta
 % parameters adjusted for the sample time. These parameters must be within

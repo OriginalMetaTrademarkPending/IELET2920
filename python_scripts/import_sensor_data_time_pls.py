@@ -16,7 +16,7 @@ ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)
 print("Connected to Arduino port: " + arduino_port)
 
 # Open the csv file
-file = open(file_name, "a")
+file = open(file_name, "a+")
 print("Created file: " + file_name)
 
 # Sensor data string
