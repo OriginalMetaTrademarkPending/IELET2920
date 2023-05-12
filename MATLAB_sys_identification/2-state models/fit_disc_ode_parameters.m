@@ -21,6 +21,7 @@ type disc_diff_eq
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
@@ -94,8 +95,23 @@ M_size = 50;
 =======
 M_size = 100;
 >>>>>>> a7ffe45 (New changes to parameter estimation)
+=======
+FILEPATH = "../../python_scripts/Test_movavg_10ms6.csv";
+readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
+y_data = readings.Data1';
+N = max(size(y_data));      %Number of samples to be registered
+tspan = 360;                %Time span of the simulation in seconds
+M_size = 100;
+
+% % some data cleanup. Comment away if no noise is found
+% for i = 1:N
+%     if(i > 9381)
+%         y_data(i) = 0.0;
+%     end
+% end
+>>>>>>> 2393880 (Final updates to the code)
 %% INITIALIZING SIMULATION
-t_vec = linspace(0, tspan, N)%Time vector for plotting and input generation
+t_vec = linspace(0, tspan, N); %Time vector for plotting and input generation
 
 % Defining the phi parameters. These parameters are defined as the theta
 % parameters adjusted for the sample time. These parameters must be within
@@ -332,13 +348,18 @@ plot(t_vec, m_est(2, :, min_index));
 plot(t_vec, y_data);
 plot(t_vec, u_vec);
 legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass");
+<<<<<<< HEAD
 xlabel("Time (s)")
 ylabel("Mass (kg)")
 title("Hand Grip System Identification")
 <<<<<<< HEAD
 <<<<<<< HEAD
+=======
+xlabel("Time (s)", "FontSize", 14)
+ylabel("Mass (kg)", "FontSize", 14)
+title("Hand Grip System Identification: Test 12m", "fontSize", 22)
+>>>>>>> 2393880 (Final updates to the code)
 hold off
-
 disp(phi_estims(:, min_index))
 <<<<<<< HEAD
 <<<<<<< HEAD
