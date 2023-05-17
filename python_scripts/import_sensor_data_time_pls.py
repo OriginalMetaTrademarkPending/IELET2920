@@ -20,6 +20,7 @@ baud = 115200
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 file_name = "python_scripts/test_bias12.csv"
 =======
 file_name = "python_scripts/test1.csv"
@@ -30,6 +31,9 @@ file_name = "python_scripts/test3.csv"
 =======
 file_name = "python_scripts/Estimate_R.csv"
 >>>>>>> 63c81e0 (estimate of sensor meassurment)
+=======
+file_name = "python_scripts/Estimate_R_series.csv"
+>>>>>>> d0ba3a8 (estimate R changes)
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)

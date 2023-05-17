@@ -11,6 +11,7 @@ type disc_diff_eq
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
@@ -28,6 +29,9 @@ FILEPATH = "../../python_scripts/test3.csv";
 =======
 FILEPATH = "../../python_scripts/Estimate_R.csv";
 >>>>>>> 63c81e0 (estimate of sensor meassurment)
+=======
+FILEPATH = "../../python_scripts/test6.csv";
+>>>>>>> d0ba3a8 (estimate R changes)
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
