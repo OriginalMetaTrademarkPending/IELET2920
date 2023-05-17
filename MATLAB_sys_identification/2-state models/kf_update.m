@@ -16,10 +16,14 @@ S = H*P_bar*H' + R;
 
 % Calculate the Kalman gain for the filter
 <<<<<<< HEAD
+<<<<<<< HEAD
 K = P_bar*H'/S;
 =======
 K = P_bar*H'*inv(S);
 >>>>>>> 9f9fe91 (Implemented the first part of the estimator (Kalman Filter). Trying to find a solution for the least squares estimator)
+=======
+K = P_bar*H'/S;
+>>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
 
 % Calculate the estimates and the state covariance matrix
 x_hat = x_bar + (K*z);
