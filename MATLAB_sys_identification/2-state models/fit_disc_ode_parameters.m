@@ -8,6 +8,7 @@ type disc_diff_eq
 % are.
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
@@ -16,6 +17,9 @@ FILEPATH = "../../python_scripts/test1.csv";
 =======
 FILEPATH = "../../python_scripts/test2.csv";
 >>>>>>> 564e173 (Massive changes to code, and perhaps a new success???)
+=======
+FILEPATH = "../../python_scripts/test1.csv";
+>>>>>>> cbd11b7 (good parameters)
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
@@ -39,8 +43,12 @@ phi_first_guess = [0.5, 0.5, 0.5, 0.5];
 M = linspace(3, 40, M_size);
 =======
 % not need to be adjusted for the sample time.
+<<<<<<< HEAD
 phi_first_guess = [0.3, 0.7, 0.9, 0.3, 20];
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
+=======
+phi_first_guess = [0.9, 0.7, 0.6, 0.9, 20];
+>>>>>>> cbd11b7 (good parameters)
 
 % The input signal is defined below. The function is then run with each
 % element.
@@ -139,8 +147,8 @@ J_1 = [phi(1) - phi(3), 1 - phi(4) - phi(3);
     1 - phi(1), phi(4)];
 
 % Now for the big answer!
-prob.Constraints.cons1 = trace(J_0)^2 <= 4*((J_0(1,1)*J_0(2,2)) - (J_0(1,2)*J_0(2,1)));
-prob.Constraints.cons2 = trace(J_1)^2 <= 4*((J_1(1,1)*J_1(2,2)) - (J_1(1,2)*J_1(2,1)));
+%prob.Constraints.cons1 = trace(J_0)^2 <= 4*((J_0(1,1)*J_0(2,2)) - (J_0(1,2)*J_0(2,1)));
+%prob.Constraints.cons2 = trace(J_1)^2 <= 4*((J_1(1,1)*J_1(2,2)) - (J_1(1,2)*J_1(2,1)));
 %% OPTIMIZATION PROBLEM: SOLVE
 % Initial guess on theta
 phi_0.phi = phi_first_guess;
