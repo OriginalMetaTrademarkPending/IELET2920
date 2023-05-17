@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 function mkp1 = disc_diff_eq(phi, mk, u, M)
+=======
+function mkp1 = disc_diff_eq(phi, mk, u)
+>>>>>>> 9f9fe91 (Implemented the first part of the estimator (Kalman Filter). Trying to find a solution for the least squares estimator)
 % The differential equations describing hand grip dynamics, discretized
 % through forward Euler
 %   mk -> vector consisting of active muscle mass m_a and fatigued muscle
