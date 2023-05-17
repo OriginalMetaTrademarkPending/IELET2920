@@ -19,6 +19,7 @@ baud = 115200
 # File name for the .csv file
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 file_name = "python_scripts/test_bias12.csv"
 =======
 file_name = "python_scripts/test1.csv"
@@ -26,6 +27,9 @@ file_name = "python_scripts/test1.csv"
 =======
 file_name = "python_scripts/test3.csv"
 >>>>>>> 564e173 (Massive changes to code, and perhaps a new success???)
+=======
+file_name = "python_scripts/Estimate_R.csv"
+>>>>>>> 63c81e0 (estimate of sensor meassurment)
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)
@@ -48,8 +52,12 @@ print("Data measurement starts now!")
 while (process_time() - start_time) < 180.0:
 =======
 # Take measurements for 4 minutes
+<<<<<<< HEAD
 while (process_time() - start_time) < 240.0:
 >>>>>>> 564e173 (Massive changes to code, and perhaps a new success???)
+=======
+while (process_time() - start_time) < 180.0:
+>>>>>>> 63c81e0 (estimate of sensor meassurment)
     if(ser.inWaiting() > 0):
         sensor_data_str += ser.read(ser.inWaiting()).decode('utf-8')
 
