@@ -2,14 +2,22 @@ import serial
 from time import process_time
 
 # Defining the Arduino port
+<<<<<<< HEAD
 #arduino_port = "COM4"
 arduino_port = "/dev/cu.wchusbserial54750076121"
+=======
+arduino_port = "/dev/cu.usbmodem14201"
+>>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
 
 # Baud rate
-baud = 115200
+baud = 9600
 
 # File name for the .csv file
+<<<<<<< HEAD
 file_name = "python_scripts/test_bias12.csv"
+=======
+file_name = "python_scripts/test1.csv"
+>>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)

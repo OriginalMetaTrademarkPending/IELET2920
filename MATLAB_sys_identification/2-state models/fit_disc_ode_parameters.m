@@ -6,9 +6,15 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
+=======
+FILEPATH = "../../python_scripts/test1.csv";
+readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
+y_data = readings.Data1';
+>>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
 N = max(size(y_data));      %Number of samples to be registered
 tspan = 180;                %Time span of the simulation in seconds
 M_size = 100;
@@ -18,10 +24,15 @@ t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generati
 % Defining the phi parameters. These parameters are defined as the theta
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
+<<<<<<< HEAD
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
 phi_first_guess = [0.5, 0.5, 0.5, 0.5]; 
 M = linspace(3, 40, M_size);
+=======
+% not need to be adjusted for the sample time.
+phi_first_guess = [0.3, 0.7, 0.9, 0.3, 20];
+>>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
 
 % The input signal is defined below. The function is then run with each
 % element.
@@ -69,6 +80,7 @@ end
 % parameters
 type disc_theta_to_ode
 
+<<<<<<< HEAD
 phi = optimvar('phi', 4);
 
 % Now, we express this function as an optimization expression.
@@ -94,6 +106,48 @@ for i = 1:M_size
     % Solve the optimization problem
     [phi_sol, sumsq(i)] = solve(prob, phi_0, 'Options', opts);
     phi_estims(:, i) = phi_sol.phi;
+=======
+phi = optimvar('phi', 5);
+
+% Now, we express this function as an optimization expression.
+%fcnt = @(theta) theta_to_ode(theta, tspan, m0, u);
+fcn = fcn2optimexpr(@disc_theta_to_ode, phi, N, u_vec);
+optim_y = fcn(1, :);
+
+% Finally, the objective function can be defined.
+obj = sum((y_data - optim_y).^2);
+
+% Now, the optimization problem
+prob = optimproblem("Objective", obj);
+
+%% OPTIMIZATION PROBLEM: CONSTRAINTS
+% We find the constraints by performing tr(A)^2 - 4*det(A) on the
+% matrices we get by setting u = 0 and u = 1. First, define these matrices
+% through optimization variables.
+J_0 = [phi(1) - phi(2), 1-phi(4);
+    1 - phi(1), phi(4)];
+
+J_1 = [phi(1) - phi(3), 1 - phi(4) - phi(3);
+    1 - phi(1), phi(4)];
+
+% Now for the big answer!
+prob.Constraints.cons1 = trace(J_0)^2 <= 4*((J_0(1,1)*J_0(2,2)) - (J_0(1,2)*J_0(2,1)));
+prob.Constraints.cons2 = trace(J_1)^2 <= 4*((J_1(1,1)*J_1(2,2)) - (J_1(1,2)*J_1(2,1)));
+%% OPTIMIZATION PROBLEM: SOLVE
+% Initial guess on theta
+phi_0.phi = phi_first_guess;
+
+% Solve the optimization problem
+[phi_sol, sumsq] = solve(prob, phi_0);
+
+disp(phi_sol.phi)
+disp(sumsq)
+%% PLOT ALL RESULTS
+m_est = NaN(2, N);
+m_est(:, 1) = zeros(2, 1);
+for i = 2:N
+    m_est(:, i) = disc_diff_eq(m_est(:, i-1), phi_sol.phi, u_vec(i));
+>>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
 end
 
 [min, min_index] = min(sumsq);
