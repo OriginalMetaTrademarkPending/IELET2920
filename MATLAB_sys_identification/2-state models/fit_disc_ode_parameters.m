@@ -349,6 +349,7 @@ plot(t_vec, y_data);
 plot(t_vec, u_vec);
 legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass");
 <<<<<<< HEAD
+<<<<<<< HEAD
 xlabel("Time (s)")
 ylabel("Mass (kg)")
 title("Hand Grip System Identification")
@@ -359,6 +360,11 @@ xlabel("Time (s)", "FontSize", 14)
 ylabel("Mass (kg)", "FontSize", 14)
 title("Hand Grip System Identification: Test 12m", "fontSize", 22)
 >>>>>>> 2393880 (Final updates to the code)
+=======
+xlabel("Time (s)")
+ylabel("Mass (kg)")
+title("Hand Grip System Identification: Test 12", "fontSize", 34)
+>>>>>>> 39930d4 (Last commit?)
 hold off
 disp(phi_estims(:, min_index))
 <<<<<<< HEAD
