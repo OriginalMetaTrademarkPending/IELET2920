@@ -10,9 +10,13 @@ solution = NaN(2, N);
 solution(:, 1) = zeros(2, 1);
 for i = 2:N
 <<<<<<< HEAD
+<<<<<<< HEAD
     solution(:, i) = disc_diff_eq(phi, solution(:, i-1), u(i), M);
 =======
     solution(:, i) = disc_diff_eq(solution(:, i-1), phi, u(i-1));
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
+=======
+    solution(:, i) = disc_diff_eq(phi, solution(:, i-1), u(i-1));
+>>>>>>> 4f56570 (Changes in the new estimator, will try to finalize tomorrow)
 end
 end

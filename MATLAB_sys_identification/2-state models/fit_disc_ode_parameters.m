@@ -12,6 +12,7 @@ type disc_diff_eq
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
@@ -32,6 +33,9 @@ FILEPATH = "../../python_scripts/Estimate_R.csv";
 =======
 FILEPATH = "../../python_scripts/test6.csv";
 >>>>>>> d0ba3a8 (estimate R changes)
+=======
+FILEPATH = "../../python_scripts/test6.csv";
+>>>>>>> 4f56570 (Changes in the new estimator, will try to finalize tomorrow)
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
@@ -83,10 +87,15 @@ mk = NaN(2, N, M_size);
 mk(:, 1, :) = zeros(2, 1, M_size);
 
 % Running simulation
+<<<<<<< HEAD
 for j = 1:M_size
     for i = 2:N
         mk(:, i, j) = disc_diff_eq(phi_first_guess, mk(:, i-1, j), u_vec(i-1), M(j));
     end
+=======
+for i = 2:N
+    mk(:, i) = disc_diff_eq(phi_first_guess, mk(:, i-1), u_vec(i-1));
+>>>>>>> 4f56570 (Changes in the new estimator, will try to finalize tomorrow)
 end
 
 % Splitting the results
@@ -152,20 +161,6 @@ obj = sum((y_data - optim_y).^2);
 
 % Now, the optimization problem
 prob = optimproblem("Objective", obj);
-
-%% OPTIMIZATION PROBLEM: CONSTRAINTS
-% We find the constraints by performing tr(A)^2 - 4*det(A) on the
-% matrices we get by setting u = 0 and u = 1. First, define these matrices
-% through optimization variables.
-J_0 = [phi(1) - phi(2), 1-phi(4);
-    1 - phi(1), phi(4)];
-
-J_1 = [phi(1) - phi(3), 1 - phi(4) - phi(3);
-    1 - phi(1), phi(4)];
-
-% Now for the big answer!
-%prob.Constraints.cons1 = trace(J_0)^2 <= 4*((J_0(1,1)*J_0(2,2)) - (J_0(1,2)*J_0(2,1)));
-%prob.Constraints.cons2 = trace(J_1)^2 <= 4*((J_1(1,1)*J_1(2,2)) - (J_1(1,2)*J_1(2,1)));
 %% OPTIMIZATION PROBLEM: SOLVE
 % Initial guess on theta
 phi_0.phi = phi_first_guess;
@@ -179,8 +174,12 @@ disp(sumsq)
 m_est = NaN(2, N);
 m_est(:, 1) = zeros(2, 1);
 for i = 2:N
+<<<<<<< HEAD
     m_est(:, i) = disc_diff_eq(m_est(:, i-1), phi_sol.phi, u_vec(i));
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
+=======
+    m_est(:, i) = disc_diff_eq(phi_sol.phi, m_est(:, i-1), u_vec(i));
+>>>>>>> 4f56570 (Changes in the new estimator, will try to finalize tomorrow)
 end
 
 [min, min_index] = min(sumsq);
