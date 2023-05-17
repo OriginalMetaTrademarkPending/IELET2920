@@ -3,21 +3,29 @@ from time import process_time
 
 # Defining the Arduino port
 <<<<<<< HEAD
+<<<<<<< HEAD
 #arduino_port = "COM4"
 arduino_port = "/dev/cu.wchusbserial54750076121"
 =======
 arduino_port = "/dev/cu.usbmodem14201"
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
+=======
+arduino_port = "/dev/cu.wchusbserial54750076121"
+>>>>>>> 564e173 (Massive changes to code, and perhaps a new success???)
 
 # Baud rate
-baud = 9600
+baud = 115200
 
 # File name for the .csv file
+<<<<<<< HEAD
 <<<<<<< HEAD
 file_name = "python_scripts/test_bias12.csv"
 =======
 file_name = "python_scripts/test1.csv"
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
+=======
+file_name = "python_scripts/test3.csv"
+>>>>>>> 564e173 (Massive changes to code, and perhaps a new success???)
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)
@@ -35,8 +43,13 @@ sensor_data = []
 start_time = process_time()
 print("Data measurement starts now!")
 
+<<<<<<< HEAD
 # Take measurements for 3 minutes
 while (process_time() - start_time) < 180.0:
+=======
+# Take measurements for 4 minutes
+while (process_time() - start_time) < 240.0:
+>>>>>>> 564e173 (Massive changes to code, and perhaps a new success???)
     if(ser.inWaiting() > 0):
         sensor_data_str += ser.read(ser.inWaiting()).decode('utf-8')
 

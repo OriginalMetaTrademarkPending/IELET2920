@@ -7,17 +7,25 @@ type disc_diff_eq
 % the starting points. For this we need the filepath where the readings
 % are.
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test_bias12.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.topMid';
 =======
 FILEPATH = "../../python_scripts/test1.csv";
+=======
+FILEPATH = "../../python_scripts/test2.csv";
+>>>>>>> 564e173 (Massive changes to code, and perhaps a new success???)
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
 >>>>>>> 3c45509 (Opened a new branch for parameter estimation. Purpose of this branch is to fix the estimation algorithm)
 N = max(size(y_data));      %Number of samples to be registered
+<<<<<<< HEAD
 tspan = 180;                %Time span of the simulation in seconds
 M_size = 100;
+=======
+tspan = 240;                %Time span of the simulation in seconds
+>>>>>>> 564e173 (Massive changes to code, and perhaps a new success???)
 %% INITIALIZING SIMULATION
 t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
 
