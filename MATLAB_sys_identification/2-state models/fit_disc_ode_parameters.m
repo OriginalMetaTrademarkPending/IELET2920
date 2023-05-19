@@ -122,7 +122,7 @@ plot(t_vec, m_est(1, :, min_index));
 plot(t_vec, m_est(2, :, min_index));
 plot(t_vec, y_data);
 plot(t_vec, u_vec);
-legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass");
+legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass", "Data", "Input");
 xlabel("Time (s)")
 ylabel("Mass (kg)")
 title("Hand Grip System Identification: Test 12", "fontSize", 34)
