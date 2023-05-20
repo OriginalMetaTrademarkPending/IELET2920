@@ -6,9 +6,9 @@ type disc_diff_eq
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
-FILEPATH = "../../python_scripts/Test_movavg_10ms6.csv";
+FILEPATH = "../../python_scripts/test_bias8.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
-y_data = readings.Data1';
+y_data = readings.Var1';
 N = max(size(y_data));      %Number of samples to be registered
 tspan = 360;                %Time span of the simulation in seconds
 M_size = 100;
@@ -116,16 +116,17 @@ end
 
 figure(1)
 hold on
-plot(t_vec, mk(1, :, min_index), '--');
-plot(t_vec, mk(2, :, min_index), '--');
-plot(t_vec, m_est(1, :, min_index));
-plot(t_vec, m_est(2, :, min_index));
-plot(t_vec, y_data);
-plot(t_vec, u_vec);
+plot(t_vec, mk(1, :, min_index), '--','LineWidth',7);
+plot(t_vec, mk(2, :, min_index), '--','LineWidth',7);
+plot(t_vec, m_est(1, :, min_index),'LineWidth',7);
+plot(t_vec, m_est(2, :, min_index),'LineWidth',7);
+plot(t_vec, y_data,'LineWidth',7);
+plot(t_vec, u_vec,'LineWidth',7);
+set(gca,"FontSize",50)
 legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass", "Data", "Input");
 xlabel("Time (s)")
 ylabel("Mass (kg)")
-title("Hand Grip System Identification: Test 12", "fontSize", 34)
+title("Hand Grip System Identification: Test bias 8", "fontSize", 62)
 hold off
 disp(phi_estims(:, min_index))
 disp(M(min_index))

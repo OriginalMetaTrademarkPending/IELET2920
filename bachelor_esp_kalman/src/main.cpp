@@ -110,28 +110,16 @@ struct KalmanFilter
 };
 
 
+// array of current and last measurement for display
+int topPixels[2];
+int topMidPixels[2];
+int botMidPixels[2];
+int botPixels[2];
 
-
-
-// make true to display the raw sensordata in red
-const bool displayRaw = true;
-
-// make false to not display the filtered sensors
-const bool displayFiltered = true;
-
-// make true/false to enable/disable sensors
-const bool topsens = true;
-
-// timeline of measurement for display
-int topPixels[4];
-int topMidPixels[4];
-int botMidPixels[4];
-int botPixels[4];
-
-//  current graphing pixel
+// Current graphing pixel
 int i = 0;
 
-//  scale of display
+// Scales of display
 const int scales[4] = {130, 1000, 2000, 4095};
 int picker = 0;
 
@@ -140,8 +128,9 @@ int button1Pin = 0;
 int button2Pin = 35;
 
 
-void topDisplay();
+void Display();
 
+// initialize sensors
 KalmanFilter topSensor;
 KalmanFilter topMidSensor;
 KalmanFilter botMidSensor;
@@ -149,7 +138,6 @@ KalmanFilter botSensor;
 
 void setup()
 {
-  // put your setup code here, to run once:
   // Screen startup
   tft.init();
   tft.setRotation(3);
@@ -189,10 +177,9 @@ void loop()
     prevSample = millis();
   }
   
-  /*
-  // print for datacollection
+  
+  // print for datacollection to be read by computer
   if((millis() - sampleStartTime) >= samplePrintTime){
-    //static_cast<float>
     Serial.print(String(static_cast<float>(topSensor.estimate.x(0))));
     Serial.print(",");
     Serial.print(String(static_cast<float>(topMidSensor.estimate.x(0))));
@@ -203,62 +190,53 @@ void loop()
     Serial.print(";");
     sampleStartTime = millis();
   }
-  */
+  
 
 
-
-
+  // print for Serial plotter debugging
+  /*
   if (millis() - prevprint >= 20) {
     if (picker == 0 or picker == 3)  {
-      Serial.print("x musselmasstop: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
-      Serial.print("x est: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
-      Serial.print("z: "); Serial.print(topSensor.z(0)); Serial.print("  ");
+      Serial.print("Fatigued_muscle_mass: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
+      Serial.print("Active_muscle_mass: "); Serial.print(topSensor.estimate.x(0)); Serial.print("  ");
+      Serial.print("Measurement: "); Serial.print(topSensor.z(0)); Serial.print("  ");
     }
     if (picker == 1 or picker == 3)  {
-      Serial.print("y: "); Serial.print(topSensor.y(0)); Serial.print("  ");
-      Serial.print("P: "); Serial.print(sqrt(topSensor.estimate.P(0))*3); Serial.print("  ");
-      Serial.print("P neg: "); Serial.print(-sqrt(topSensor.estimate.P(0))*3); Serial.print("  ");
+      Serial.print("Residual: "); Serial.print(topSensor.y(0)); Serial.print("  ");
+      Serial.print("3_sigma: "); Serial.print(sqrt(topSensor.estimate.P(0))*3); Serial.print("  ");
+      Serial.print("-3_sigma: "); Serial.print(-sqrt(topSensor.estimate.P(0))*3); Serial.print("  ");
     }
-    Serial.println("uT");
+    Serial.println("uT"); // DO NOT REMOVE
     
     prevprint = millis();
   }
+  */
   
- 
-  if (digitalRead(button1Pin) == 0) {
-    topSensor.estimate.x(1) = 0;
-    topSensor.prediction.x(1) = 0;
-  }
+
 
   // grafing
   // change display scale and reset display
   if (digitalRead(button2Pin) == 0) {
     picker++;
-    while (digitalRead(button2Pin) == 0)  {}  // button debouncer
+    // wait for button release (debounce)
+    while (digitalRead(button2Pin) == 0)  {}
     i = 0;
     tft.fillScreen(TFT_BLACK);
     if (picker >= 4) {
       picker = 0;
     }
   }
-
+  // scroll through screen every 20ms
   if (millis() - prevprint >= 20) {
-    // scrolling thru screen
     i++;
     if (i > 241)  {
       i = 0;
       tft.fillScreen(TFT_BLACK);
     }
 
-
     // display the picked scale and the raw and filtered bottomsensor in numbers
     tft.drawString("Scale: " + String(scales[picker]),155,0);
-
-    // top sensor
-    
-    if (topsens)  {
-      topDisplay();
-    }
+    Display();
     prevprint = millis();
   }
 
@@ -268,22 +246,23 @@ void loop()
 }
 
 
-void topDisplay()
+void Display()
 {
-  if (displayFiltered)
-  {
-    topPixels[1] = topPixels[0];
-    topPixels[0] = map((4095*topSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
-    tft.drawLine(i, topPixels[0], i, topPixels[1], TFT_BLUE);
-    topMidPixels[1] = topMidPixels[0];
-    topMidPixels[0] = map((4095*topMidSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
-    tft.drawLine(i, topMidPixels[0], i, topMidPixels[1], TFT_GREENYELLOW);
-    botMidPixels[1] = botMidPixels[0];
-    botMidPixels[0] = map((4095*botMidSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
-    tft.drawLine(i, botMidPixels[0], i, botMidPixels[1], TFT_ORANGE);
-    botPixels[1] = botPixels[0];
-    botPixels[0] = map((4095*botSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
-    tft.drawLine(i, botPixels[0], i, botPixels[1], TFT_RED);
-  }
+  // Draw lines between last and current point
+  topPixels[1] = topPixels[0];
+  topPixels[0] = map((4095*topSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
+  tft.drawLine(i, topPixels[0], i, topPixels[1], TFT_BLUE);
+
+  topMidPixels[1] = topMidPixels[0];
+  topMidPixels[0] = map((4095*topMidSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
+  tft.drawLine(i, topMidPixels[0], i, topMidPixels[1], TFT_GREENYELLOW);
+
+  botMidPixels[1] = botMidPixels[0];
+  botMidPixels[0] = map((4095*botMidSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
+  tft.drawLine(i, botMidPixels[0], i, botMidPixels[1], TFT_ORANGE);
+
+  botPixels[1] = botPixels[0];
+  botPixels[0] = map((4095*botSensor.estimate.x(0))/13.8384, 0, scales[picker], 130, 1);
+  tft.drawLine(i, botPixels[0], i, botPixels[1], TFT_RED);
 }
 
