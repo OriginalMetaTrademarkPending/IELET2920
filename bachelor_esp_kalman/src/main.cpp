@@ -7,8 +7,11 @@ using namespace BLA;
 // screen setup and naming
 TFT_eSPI tft = TFT_eSPI();
 
+float prev = 0;
+float now = 0;
 
-const long sampletime = 5; 
+
+const long sampletime = 10; 
 const long samplePrintTime = 10;
 
 struct KalmanFilter
@@ -49,20 +52,23 @@ struct KalmanFilter
   BLA::Matrix<2, 1> B = {phi_ra * M, 0};
   const BLA::Matrix<2, 2> I = {1., 0., 0., 1.}; 
 
+  float flagDer = 0.;
+
   void read()
   {
     z_prev = z;
     reading = analogRead(pin);
     z(0) = {static_cast<float>(13.8384*reading)/4095};
+    flagDer = (z(0) - z_prev(0))/sampletime;
   }
 
   void predict()
   { 
-    bool flagDer = (z(0) - z_prev(0))/sampletime > -10;
+    //bool flagDer = (z(0) - z_prev(0))/sampletime > -10;
     bool flagLow = z(0) > 0.1;
     float last_pred = 0.;
 
-    if (flagDer and flagLow)
+    if (flagDer > -0.05 and flagLow)
     {
       F = {phi_af - phi_ra, 1 - phi_fa - phi_ra,
           1 - phi_af, phi_fa};
@@ -77,9 +83,6 @@ struct KalmanFilter
       last_pred = prediction.x(1);
       prediction.x = (F * estimate.x);
       
-      if (last_pred < prediction.x(1))  {
-        prediction.x(1) = last_pred;
-      }
       
     }
     prediction.P = (F * estimate.P * ~F) + (Q);
@@ -166,6 +169,7 @@ void setup()
 unsigned long prevprint = millis();
 unsigned long prevSample = millis();
 unsigned long sampleStartTime = millis();
+unsigned long prevscreenprint = millis();
 
 void loop()
 { // readings and predictions
@@ -177,7 +181,7 @@ void loop()
     prevSample = millis();
   }
   
-  
+  /*
   // print for datacollection to be read by computer
   if((millis() - sampleStartTime) >= samplePrintTime){
     Serial.print(String(static_cast<float>(topSensor.estimate.x(0))));
@@ -190,11 +194,11 @@ void loop()
     Serial.print(";");
     sampleStartTime = millis();
   }
-  
+  */
 
 
   // print for Serial plotter debugging
-  /*
+  
   if (millis() - prevprint >= 20) {
     if (picker == 0 or picker == 3)  {
       Serial.print("Fatigued_muscle_mass: "); Serial.print(topSensor.estimate.x(1)); Serial.print("  ");
@@ -206,11 +210,11 @@ void loop()
       Serial.print("3_sigma: "); Serial.print(sqrt(topSensor.estimate.P(0))*3); Serial.print("  ");
       Serial.print("-3_sigma: "); Serial.print(-sqrt(topSensor.estimate.P(0))*3); Serial.print("  ");
     }
-    Serial.println("uT"); // DO NOT REMOVE
+    Serial.println("uT"); // DO NOT REMOVE - will not serial plot without this
     
     prevprint = millis();
   }
-  */
+  
   
 
 
@@ -227,7 +231,7 @@ void loop()
     }
   }
   // scroll through screen every 20ms
-  if (millis() - prevprint >= 20) {
+  if (millis() - prevscreenprint >= 20) {
     i++;
     if (i > 241)  {
       i = 0;
@@ -236,8 +240,12 @@ void loop()
 
     // display the picked scale and the raw and filtered bottomsensor in numbers
     tft.drawString("Scale: " + String(scales[picker]),155,0);
+    float prev = now;
+    float now = analogRead(topSensor.pin);
+    
+    tft.drawString("Derivative: " + String(topSensor.flagDer),130,20);
     Display();
-    prevprint = millis();
+    prevscreenprint = millis();
   }
 
   
