@@ -68,7 +68,7 @@ struct KalmanFilter
     bool flagLow = z(0) > 0.1;
     float last_pred = 0.;
 
-    if (flagDer > -0.05 and flagLow)
+    if (flagDer > -0.04 and flagLow)
     {
       F = {phi_af - phi_ra, 1 - phi_fa - phi_ra,
           1 - phi_af, phi_fa};
