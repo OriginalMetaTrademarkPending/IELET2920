@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 function mkp1 = disc_diff_eq(phi, mk, u, M)
 =======
 function mkp1 = disc_diff_eq(phi, mk, u)
@@ -7,6 +8,9 @@ function mkp1 = disc_diff_eq(phi, mk, u)
 =======
 function mkp1 = disc_diff_eq(phi, mk, u, M)
 >>>>>>> 6d69de0 (M - changes)
+=======
+function mkp1 = disc_diff_eq(phi, mk, u, M)
+>>>>>>> master
 % The differential equations describing hand grip dynamics, discretized
 % through forward Euler
 %   mk -> vector consisting of active muscle mass m_a and fatigued muscle
@@ -20,10 +24,14 @@ function mkp1 = disc_diff_eq(phi, mk, u, M)
 %   phi(5) = M
 %   u -> scalar which serves as the control input for the model.
 <<<<<<< HEAD
+<<<<<<< HEAD
 p_af = phi(1); p_ar = phi(2); p_ra = phi(3); p_fa = phi(4);
 =======
 p_af = phi(1); p_ar = phi(2); p_ra = phi(3); p_fa = phi(4); 
 >>>>>>> 6d69de0 (M - changes)
+=======
+p_af = phi(1); p_ar = phi(2); p_ra = phi(3); p_fa = phi(4);
+>>>>>>> master
 
 A = [p_af - p_ar*(1-u) - p_ra*u, 1 - p_fa - p_ra*u;
      1 - p_af, p_fa];

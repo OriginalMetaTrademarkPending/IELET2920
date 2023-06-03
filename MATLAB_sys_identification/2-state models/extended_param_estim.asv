@@ -8,6 +8,7 @@ R = cov(r_data);
 % The Q vector is only available as a tuning variable. We have chosen to
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 % start with Q = 2.5*R in the diagonal, as well as 0 in the covariance
 % elements.
 Q = 2.5*R*eye(2);
@@ -21,6 +22,11 @@ Q = 0.2*R*eye(2);
 % elements.
 Q = 2.5*R*eye(2);
 >>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
+=======
+% start with Q = 2.5*R in the diagonal, as well as 0 in the covariance
+% elements.
+Q = 2.5*R*eye(2);
+>>>>>>> master
 
 %% MODEL IMPORT
 % We start by importing the discretized differential equations (via Forward
@@ -32,6 +38,7 @@ type disc_diff_eq
 % are.
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILEPATH = "../../python_scripts/test5.csv";
 =======
 FILEPATH = "../../python_scripts/test6.csv";
@@ -39,6 +46,9 @@ FILEPATH = "../../python_scripts/test6.csv";
 =======
 FILEPATH = "../../python_scripts/test5.csv";
 >>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
+=======
+FILEPATH = "../../python_scripts/test5.csv";
+>>>>>>> master
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y = readings.Data1';
 N = max(size(y));           %Number of samples to be registered
@@ -89,6 +99,7 @@ m_fatig = mk(2, :);
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 %% EXTENDED ESTIMATOR IMPLEMENTATION
 =======
 %% KALMAN FILTER IMPLEMENTATION
@@ -96,6 +107,9 @@ m_fatig = mk(2, :);
 =======
 %% EXTENDED ESTIMATOR IMPLEMENTATION
 >>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
+=======
+%% EXTENDED ESTIMATOR IMPLEMENTATION
+>>>>>>> master
 % Declaring some constants. Here, the the measurement
 % function is a constant.
 H = [1 0];
@@ -103,12 +117,16 @@ H = [1 0];
 % initial state estimate and the initial state covariance. We also need to
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
+=======
+>>>>>>> master
 % preallocate the predicted state and prediction covariance, as well as the
 % residual vector
 x_hat(:, 1) = zeros(2, 1);
 P_hat = 100*eye(2);
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 % preallocate the predicted state and prediction covariance.
@@ -119,14 +137,19 @@ P_hat = zeros(2, 2);
 >>>>>>> 9f9fe91 (Implemented the first part of the estimator (Kalman Filter). Trying to find a solution for the least squares estimator)
 =======
 >>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
+=======
+>>>>>>> master
 
 x_bar = NaN(2, N);
 P_bar = zeros(2, 2);
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
+=======
+>>>>>>> master
 z = NaN(1, N);
 
 % Initializing the "optimal" parameters.
@@ -134,20 +157,26 @@ phi_star.phi = phi_0;
 phi_star1.phi = phi_0;
 phi_star2.phi = phi_0;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 % Initializing the "optimal" parameters.
 phi_star.phi = phi_0;
 >>>>>>> 9f9fe91 (Implemented the first part of the estimator (Kalman Filter). Trying to find a solution for the least squares estimator)
 =======
 >>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
+=======
+>>>>>>> master
 
 % Initializing the optimization variables for the least squares estimation
 optim_phi = optimvar('phi', 5, 'LowerBound', [0, 0, 0, 0, 0]);
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
+=======
+>>>>>>> master
 % Initializing the residual evaluation variable
 residual_limit = NaN(1, N);
 
@@ -180,6 +209,7 @@ plot(t_vec, z)
 hold on
 plot(t_vec, residual_limit);
 plot(t_vec, -residual_limit);
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 % Initializing the optimalization expression variables
@@ -262,3 +292,5 @@ title("Hand Grip System Identification")
 >>>>>>> 9f9fe91 (Implemented the first part of the estimator (Kalman Filter). Trying to find a solution for the least squares estimator)
 =======
 >>>>>>> beb4004 (Full Kalman Filter implementation in MATLAB)
+=======
+>>>>>>> master

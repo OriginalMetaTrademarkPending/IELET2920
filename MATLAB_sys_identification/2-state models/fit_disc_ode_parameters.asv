@@ -1,14 +1,19 @@
 % We start by importing the discretized differential equations (via Forward
 % Euler)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 clear
 >>>>>>> 2393880 (Final updates to the code)
+=======
+clear
+>>>>>>> master
 type disc_diff_eq
 
 % Next, we import the data retrieved from the system testing, as well as
 % the starting points. For this we need the filepath where the readings
 % are.
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 FILEPATH = "../../python_scripts/test1.csv";
@@ -27,6 +32,8 @@ M_size = 30;
 %% INITIALIZING SIMULATION
 t_vec = linspace(0, tspan, N);      %Time vector for plotting and input generation
 =======
+=======
+>>>>>>> master
 FILEPATH = "../../python_scripts/Test_movavg_10ms6.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
 y_data = readings.Data1';
@@ -42,11 +49,15 @@ M_size = 100;
 % end
 %% INITIALIZING SIMULATION
 t_vec = linspace(0, tspan, N); %Time vector for plotting and input generation
+<<<<<<< HEAD
 >>>>>>> 2393880 (Final updates to the code)
+=======
+>>>>>>> master
 
 % Defining the phi parameters. These parameters are defined as the theta
 % parameters adjusted for the sample time. These parameters must be within
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 % not need to be adjusted for the sample time.
@@ -59,11 +70,16 @@ M = linspace(0, 30, M_size);
 % af, 
 >>>>>>> e10bbb0 (New parameter estimation changes)
 =======
+=======
+>>>>>>> master
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
 phi_first_guess = [0.5, 0.5, 0.5, 0.5]; 
 M = linspace(3, 40, M_size);
+<<<<<<< HEAD
 >>>>>>> 2393880 (Final updates to the code)
+=======
+>>>>>>> master
 
 % The input signal is defined below. The function is then run with each
 % element.
@@ -77,6 +93,7 @@ for i = 1:N
 end
 
 % Initializing the simulation results
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 mk = NaN(2, N);
@@ -103,6 +120,8 @@ m_fatig = mk(2, :);
 =======
 =======
 >>>>>>> 2393880 (Final updates to the code)
+=======
+>>>>>>> master
 mk = NaN(2, N, M_size);
 mk(:, 1, :) = zeros(2, 1, M_size);
 
@@ -115,6 +134,7 @@ end
 
 % Splitting the results
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 % Plotting the results
 for i = 1:M_size
@@ -130,6 +150,8 @@ end
 hold off
 >>>>>>> e10bbb0 (New parameter estimation changes)
 =======
+=======
+>>>>>>> master
 % % Plotting the results
 % for i = 1:M_size
 %     figure(1)
@@ -142,7 +164,10 @@ hold off
 %     title("Hand Grip Model Simulation")
 % end
 % hold off
+<<<<<<< HEAD
 >>>>>>> 2393880 (Final updates to the code)
+=======
+>>>>>>> master
 
 %% LEAST SQUARES ESTIMATION
 % In order to find the theta-parameters, we need to declare them as
@@ -153,6 +178,7 @@ hold off
 % parameters
 type disc_theta_to_ode
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 phi = optimvar('phi', 5);
@@ -235,6 +261,8 @@ for i = 1:M_size
     phi_estims(i, :) = phi_sol.phi;
 end
 =======
+=======
+>>>>>>> master
 phi = optimvar('phi', 4);
 
 % Now, we express this function as an optimization expression.
@@ -264,12 +292,16 @@ end
 
 [min, min_index] = min(sumsq);
 
+<<<<<<< HEAD
 >>>>>>> 2393880 (Final updates to the code)
+=======
+>>>>>>> master
 %% PLOT ALL RESULTS
 m_est = NaN(2, N, M_size);
 m_est(:, 1, :) = zeros(2, 1, M_size);
 for j = 1:M_size
     for i = 2:N
+<<<<<<< HEAD
 <<<<<<< HEAD
         m_est(:, i, j) = disc_diff_eq(phi_estims(j, :), m_est(:, i-1), u_vec(i), M(j));
     end
@@ -291,6 +323,8 @@ for i = 1:M_size
 end
 >>>>>>> e10bbb0 (New parameter estimation changes)
 =======
+=======
+>>>>>>> master
         m_est(:, i, j) = disc_diff_eq(phi_estims(:, j), m_est(:, i-1, j), u_vec(i), M(j));
     end
 end
@@ -311,4 +345,7 @@ hold off
 disp(phi_estims(:, min_index))
 disp(M(min_index))
 disp(sumsq(min_index))
+<<<<<<< HEAD
 >>>>>>> 2393880 (Final updates to the code)
+=======
+>>>>>>> master

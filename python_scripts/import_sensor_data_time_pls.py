@@ -5,6 +5,7 @@ from time import process_time
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #arduino_port = "COM4"
 arduino_port = "/dev/cu.wchusbserial54750076121"
 =======
@@ -16,11 +17,16 @@ arduino_port = "/dev/cu.wchusbserial54750076121"
 =======
 arduino_port = "COM4"
 >>>>>>> dc87003 (test bias1 and 2)
+=======
+#arduino_port = "COM4"
+arduino_port = "/dev/cu.wchusbserial54750076121"
+>>>>>>> master
 
 # Baud rate
 baud = 115200
 
 # File name for the .csv file
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -54,6 +60,9 @@ file_name = "python_scripts/Test_movavg_10ms6.csv"
 =======
 file_name = "test_bias2.csv"
 >>>>>>> dc87003 (test bias1 and 2)
+=======
+file_name = "python_scripts/test_bias12.csv"
+>>>>>>> master
 
 # Start the serial port
 ser = serial.Serial(port = arduino_port, baudrate = baud, timeout = 0.0005)
@@ -76,6 +85,7 @@ print("Data measurement starts now!")
 <<<<<<< HEAD
 # Take measurements for 3 minutes
 while (process_time() - start_time) < 180.0:
+<<<<<<< HEAD
 =======
 # Take measurements for 4 minutes
 <<<<<<< HEAD
@@ -92,6 +102,8 @@ while (process_time() - start_time) < 240.0:
 # Take measurements for 3 minutes
 while (process_time() - start_time) < 60.0:
 >>>>>>> dc87003 (test bias1 and 2)
+=======
+>>>>>>> master
     if(ser.inWaiting() > 0):
         sensor_data_str += ser.read(ser.inWaiting()).decode('utf-8')
 
