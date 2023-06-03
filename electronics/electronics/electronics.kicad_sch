@@ -533,9 +533,12 @@
   (junction (at 137.16 41.91) (diameter 0) (color 0 0 0 0)
     (uuid 3db98405-4a79-46d0-ab34-19552b2e79ee)
   )
+<<<<<<< HEAD
+=======
   (junction (at 156.21 55.88) (diameter 0) (color 0 0 0 0)
     (uuid 4b8a587a-4482-4d3a-b27e-4f7d0a782dca)
   )
+>>>>>>> master
   (junction (at 186.69 87.63) (diameter 0) (color 0 0 0 0)
     (uuid 5e884e12-71d5-4722-9fd8-f61b9b4cfc23)
   )
@@ -548,9 +551,12 @@
   (junction (at 186.69 116.84) (diameter 0) (color 0 0 0 0)
     (uuid ce550780-2dac-4112-8741-97f26cdfba01)
   )
+<<<<<<< HEAD
+=======
   (junction (at 153.67 27.94) (diameter 0) (color 0 0 0 0)
     (uuid d76c32f5-e2f6-45d0-8613-14ffbf1e6c0a)
   )
+>>>>>>> master
   (junction (at 186.69 58.42) (diameter 0) (color 0 0 0 0)
     (uuid f377d6bb-af91-40ba-ace7-7a7de5f17bed)
   )
@@ -606,10 +612,13 @@
     (stroke (width 0) (type default))
     (uuid 211ff77a-6dc7-4e37-bf80-570c4f3b0b7a)
   )
+<<<<<<< HEAD
+=======
   (wire (pts (xy 134.62 59.69) (xy 156.21 59.69))
     (stroke (width 0) (type default))
     (uuid 22432944-c227-4f9b-8799-998333582e6a)
   )
+>>>>>>> master
   (wire (pts (xy 200.66 57.15) (xy 219.71 57.15))
     (stroke (width 0) (type default))
     (uuid 23651930-5437-428d-aefe-055da0686ef6)
@@ -746,7 +755,11 @@
     (stroke (width 0) (type default))
     (uuid 81c288fd-37d4-4a2e-8c8f-308d62a7ae28)
   )
+<<<<<<< HEAD
+  (wire (pts (xy 137.16 33.02) (xy 160.02 33.02))
+=======
   (wire (pts (xy 129.54 73.66) (xy 134.62 73.66))
+>>>>>>> master
     (stroke (width 0) (type default))
     (uuid 876c5a9c-86bc-45f2-9d91-d6d337013151)
   )
@@ -758,6 +771,13 @@
     (stroke (width 0) (type default))
     (uuid 963f7d90-fa87-49f6-80fb-d43c60272743)
   )
+<<<<<<< HEAD
+  (wire (pts (xy 175.26 30.48) (xy 186.69 30.48))
+    (stroke (width 0) (type default) (color 255 158 42 1))
+    (uuid 980a48a0-6fc8-4f9c-ab4e-8e34fb888194)
+  )
+=======
+>>>>>>> master
   (wire (pts (xy 200.66 58.42) (xy 200.66 57.15))
     (stroke (width 0) (type default))
     (uuid 99724c29-6add-4c2a-b225-48e1061b275b)
@@ -766,10 +786,13 @@
     (stroke (width 0) (type default))
     (uuid 99ffde4a-6ef1-4cd7-91f0-2758078b5db5)
   )
+<<<<<<< HEAD
+=======
   (wire (pts (xy 156.21 59.69) (xy 156.21 55.88))
     (stroke (width 0) (type default))
     (uuid a01026c4-9765-4316-bfc8-2ce93334a05d)
   )
+>>>>>>> master
   (wire (pts (xy 210.82 59.69) (xy 219.71 59.69))
     (stroke (width 0) (type default) (color 255 158 42 1))
     (uuid a0357579-e342-4688-b577-160668ffb654)
@@ -798,6 +821,11 @@
     (stroke (width 0) (type default) (color 32 53 255 1))
     (uuid b3e080e1-91af-4ba2-8948-085f3ddd2dad)
   )
+<<<<<<< HEAD
+  (wire (pts (xy 186.69 116.84) (xy 186.69 115.57))
+    (stroke (width 0) (type default) (color 188 13 255 1))
+    (uuid b8b2b3a0-86bf-4f8c-a972-cd718e520e1d)
+=======
   (wire (pts (xy 128.27 100.33) (xy 133.35 100.33))
     (stroke (width 0) (type default))
     (uuid b3f126a8-f1f6-4f03-a7ab-22cb15d580c1)
@@ -809,6 +837,7 @@
   (wire (pts (xy 128.27 44.45) (xy 128.27 50.8))
     (stroke (width 0) (type default))
     (uuid bfd62ba6-3d1b-4d94-9290-d8e6908b2780)
+>>>>>>> master
   )
   (wire (pts (xy 137.16 33.02) (xy 137.16 41.91))
     (stroke (width 0) (type default))
@@ -908,6 +937,47 @@
     (uuid f85bdc85-6c81-465d-a281-a0b0c115372e)
   )
 
+<<<<<<< HEAD
+  (symbol (lib_id "Amplifier_Operational:TL074") (at 167.64 30.48 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 0482ea78-f499-4681-b4f4-5f042845a218)
+    (property "Reference" "U1" (at 173.99 24.5111 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "TL071" (at 173.99 26.67 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_DIP:DIP-14_W7.62mm_LongPads" (at 166.37 27.94 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "http://www.ti.com/lit/ds/symlink/tl071.pdf" (at 168.91 25.4 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 38529d21-9076-42f2-aff3-1d342c2e2faf))
+    (pin "2" (uuid ceccd77b-c011-4e7d-9cbd-58888b5582fe))
+    (pin "3" (uuid 0fcca899-eefc-4823-86cd-f28da685cf89))
+    (pin "5" (uuid 8b010c05-b031-4464-81f5-789264c17f47))
+    (pin "6" (uuid 50318c05-0549-4555-8270-71145eb28ee2))
+    (pin "7" (uuid 31a3456c-5eec-4e93-8f3b-2e32e7cd977c))
+    (pin "10" (uuid d0d97961-d6b5-4ead-96f4-5e35f0df947b))
+    (pin "8" (uuid 99887293-5f89-43ad-9964-7c0b541323b1))
+    (pin "9" (uuid f12f184c-adfc-4da9-861f-6b955af540a5))
+    (pin "12" (uuid 44a683c8-ae13-4ea9-a2ca-0cbc06c6e8ad))
+    (pin "13" (uuid 3c03067f-443c-44b5-bb5a-4fa5c0eccb9d))
+    (pin "14" (uuid 17530105-f9b3-4738-9774-e7c1a58429b6))
+    (pin "11" (uuid cf879fcb-04ab-42ae-9566-95a5749c05aa))
+    (pin "4" (uuid 841d92b6-497f-4ed6-bbf9-2711098ffee1))
+    (instances
+      (project "electronics"
+        (path "/aaef8311-3c70-4d48-a00f-10ced39c09bd"
+          (reference "U1") (unit 1)
+        )
+      )
+    )
+  )
+
+=======
+>>>>>>> master
   (symbol (lib_id "Device:R") (at 140.97 43.18 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 06016f11-501b-4d07-8dda-ae28a0de2992)
@@ -1075,15 +1145,44 @@
     )
   )
 
+<<<<<<< HEAD
+  (symbol (lib_id "Amplifier_Operational:TL074") (at 167.64 115.57 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 2e2a0f3b-bbac-4192-b72f-9afada8da05c)
+    (property "Reference" "U4" (at 173.99 109.22 0)
+=======
   (symbol (lib_id "Amplifier_Operational:TL074") (at 167.64 58.42 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 31743e9c-a67f-41a0-bf69-c2acbcb2b462)
     (property "Reference" "U1" (at 167.64 49.53 0)
+>>>>>>> master
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "TL074" (at 167.64 52.07 0)
       (effects (font (size 1.27 1.27)))
     )
+<<<<<<< HEAD
+    (property "Footprint" "Package_DIP:DIP-14_W7.62mm_LongPads" (at 166.37 113.03 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "http://www.ti.com/lit/ds/symlink/tl071.pdf" (at 168.91 110.49 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 3ee6fed5-7fa5-4f48-ab33-f43f4707719e))
+    (pin "2" (uuid 0e5b7b17-ee56-4927-8ce2-48fc9f578bf2))
+    (pin "3" (uuid af1c0133-20bc-4a3f-98bc-5c8d2d5a2ad5))
+    (pin "5" (uuid cbca0580-c7d7-487f-a1e7-f950c6af0443))
+    (pin "6" (uuid 6b11fd82-439e-427c-bb85-bac63510da7f))
+    (pin "7" (uuid 4c9476b4-bbc4-470a-9e35-13bd96ccf3cd))
+    (pin "10" (uuid 80ee134f-5be3-4ef6-a696-3ef087c80de4))
+    (pin "8" (uuid 24177af2-d597-4ea0-a487-c5efbc8f43b2))
+    (pin "9" (uuid de5ee73b-f8d0-4d4a-8bce-f79e742e972e))
+    (pin "12" (uuid f72c8d99-92a9-46aa-8e74-969f7e3669d5))
+    (pin "13" (uuid 9553407c-ef1b-415e-acc6-1b63cb284336))
+    (pin "14" (uuid bfd25777-aed4-4b94-9585-bdc93d2ad767))
+    (pin "11" (uuid af7a1382-3725-4ddf-956e-5df9c39641f5))
+    (pin "4" (uuid bc69d89a-92a6-423d-9b6b-080bcff53ad2))
+=======
     (property "Footprint" "Package_DIP:DIP-14_W7.62mm_LongPads" (at 166.37 55.88 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -1104,6 +1203,7 @@
     (pin "14" (uuid 42071971-321f-4e66-9d8f-e46bc0b4d0e5))
     (pin "11" (uuid 860630b0-e5d5-4d75-8983-ec7be765933a))
     (pin "4" (uuid 42ecc755-1137-4684-92dd-3c367e1f3f07))
+>>>>>>> master
     (instances
       (project "electronics"
         (path "/aaef8311-3c70-4d48-a00f-10ced39c09bd"
@@ -1255,6 +1355,47 @@
     )
   )
 
+<<<<<<< HEAD
+  (symbol (lib_id "Amplifier_Operational:TL074") (at 167.64 87.63 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 70b1468f-b47e-4f9f-a45b-7f92c1a9aa3b)
+    (property "Reference" "U3" (at 173.99 81.28 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "TL071" (at 173.99 83.82 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_DIP:DIP-14_W7.62mm_LongPads" (at 166.37 85.09 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "http://www.ti.com/lit/ds/symlink/tl071.pdf" (at 168.91 82.55 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 01ed6466-40b0-4400-b0c7-365f9e251ea6))
+    (pin "2" (uuid 1045e70e-2bff-4369-a798-ae2d43f8cdc3))
+    (pin "3" (uuid 5c11e535-cdc5-4ae7-a5d0-7fe35d2d74ce))
+    (pin "5" (uuid 19f70a11-4339-4dcf-8eb7-067bd01a7662))
+    (pin "6" (uuid b9cf5488-652e-4f83-929c-ba3f36462f01))
+    (pin "7" (uuid b1342286-1431-4f29-8035-1fab8b529016))
+    (pin "10" (uuid 566eac20-dc01-4bdb-bb88-a943ed121b5f))
+    (pin "8" (uuid f604b064-2c40-47dc-87a4-438a1504cd27))
+    (pin "9" (uuid 26fef79f-85db-4a74-a4ac-b523a4dba426))
+    (pin "12" (uuid baeac77d-4a9e-4c6f-96ee-d00a2ae7e563))
+    (pin "13" (uuid ebf6c8a8-7f7d-4afd-bc8b-54e4a3d7c14a))
+    (pin "14" (uuid 41fec806-b821-4c32-adcf-54b315a384fe))
+    (pin "11" (uuid 3927947a-28aa-4db9-a102-5ca6b2afdfa6))
+    (pin "4" (uuid 729a6332-b078-498f-818f-1326c3eecfbf))
+    (instances
+      (project "electronics"
+        (path "/aaef8311-3c70-4d48-a00f-10ced39c09bd"
+          (reference "U3") (unit 1)
+        )
+      )
+    )
+  )
+
+=======
+>>>>>>> master
   (symbol (lib_id "ttgo_esp32:TTGO_ESP32_TDISPLAY_V1.1") (at 242.57 68.58 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 71a233a9-4de2-4ca8-a697-bd75bfd679de)
@@ -1367,6 +1508,8 @@
     )
   )
 
+<<<<<<< HEAD
+=======
   (symbol (lib_id "Amplifier_Operational:TL074") (at 170.18 30.48 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 8a9f8edf-419d-4870-a6a5-2b7250a02c53)
@@ -1443,6 +1586,7 @@
     )
   )
 
+>>>>>>> master
   (symbol (lib_id "Device:R") (at 151.13 128.27 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid a7056aca-d2c6-44c4-8405-db666d5bef92)
@@ -1801,6 +1945,47 @@
     )
   )
 
+<<<<<<< HEAD
+  (symbol (lib_id "Amplifier_Operational:TL074") (at 167.64 58.42 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid fc03f0c4-0224-4085-9e4e-2a4b44f82047)
+    (property "Reference" "U2" (at 173.99 52.07 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "TL071" (at 173.99 54.61 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_DIP:DIP-14_W7.62mm_LongPads" (at 166.37 55.88 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "http://www.ti.com/lit/ds/symlink/tl071.pdf" (at 168.91 53.34 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 5b106943-a6fa-4ff0-803a-d4b3b8e82f6d))
+    (pin "2" (uuid ad3f3ce3-9315-4e8f-9114-0c6db8da0e60))
+    (pin "3" (uuid f9e9821a-4e86-44a3-b8e8-ca07bde185f5))
+    (pin "5" (uuid a485760b-2cf0-4c1b-b975-0da945d9a60d))
+    (pin "6" (uuid 99443b1f-e3f2-4ba1-a5d7-49d80d61c474))
+    (pin "7" (uuid 818312d2-8908-4786-be8e-d060589630ef))
+    (pin "10" (uuid ec5b30c0-4ca3-481a-9fe0-5e2b1fd68543))
+    (pin "8" (uuid 837ae3f2-f70d-4cee-8aa9-645c9dd310fb))
+    (pin "9" (uuid 79d170a2-cb2f-4966-be0d-9e1ead957de7))
+    (pin "12" (uuid a95f43f0-00e5-490c-afad-45994a234fcd))
+    (pin "13" (uuid 390073d8-3980-4c7e-bb82-f9153df3b2f2))
+    (pin "14" (uuid 46f26c03-f88f-486e-a4f8-4a64459c591f))
+    (pin "11" (uuid 6a2a535b-aca9-4a23-8e9a-9eddb4804f23))
+    (pin "4" (uuid b23e9282-dec6-4007-b387-ec60d8d8631f))
+    (instances
+      (project "electronics"
+        (path "/aaef8311-3c70-4d48-a00f-10ced39c09bd"
+          (reference "U2") (unit 1)
+        )
+      )
+    )
+  )
+
+=======
+>>>>>>> master
   (sheet_instances
     (path "/" (page "1"))
   )
