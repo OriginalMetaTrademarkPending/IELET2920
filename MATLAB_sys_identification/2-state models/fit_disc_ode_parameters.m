@@ -8,9 +8,10 @@ type disc_diff_eq
 % are.
 FILEPATH = "../../python_scripts/test1.csv";
 readings = readtable(FILEPATH, 'VariableNamingRule', 'preserve');
-y_data = readings.Data1';
+y_data = readings.Sensor1';
 tspan = 360;                %Time span of the simulation in seconds
 M_size = 100;
+N = length(y_data);
 
 % % some data cleanup. Comment away if no noise is found
 % for i = 1:N
@@ -27,7 +28,7 @@ t_vec = linspace(0, tspan, N); %Time vector for plotting and input generation
 % 0 and 1. The last parameter is the total muscle mass. This parameter does
 % not need to be adjusted for the sample time, but will be included as a
 % family of different parameters.
-phi_first_guess = [0.5, 0.5, 0.5, 0.5]; 
+phi_first_guess = [0.5, 0.5, 0.5, 0.5]; % Change these to generate different results.
 M = linspace(3, 40, M_size);
 
 % The input signal is defined below. The function is then run with each
@@ -49,26 +50,10 @@ mk(:, 1, :) = zeros(2, 1, M_size);
 for j = 1:M_size
     for i = 2:N
         mk(:, i, j) = disc_diff_eq(phi_first_guess, mk(:, i-1, j), u_vec(i-1), M(j));
+    end
 end
 
-% Splitting the results
-
-% % Plotting the results
-% for i = 1:M_size
-%     figure(1)
-%     hold on
-%     plot(t_vec, mk(1, :, i));
-%     plot(t_vec, mk(2, :, i));
-%     legend("Active Muscle Mass", "Fatigued Muscle Mass");
-%     xlabel("Time (s)")
-%     ylabel("Mass (kg)")
-%     title("Hand Grip Model Simulation")
-% end
-% hold off
-
 %% LEAST SQUARES ESTIMATION
-% In order to find the theta-parameters, we need to declare them as
-% optimization variables.
 % The objective function is the sum of squares of the differences between
 % the "real" solution and the data. In order to define the objective
 % function, we need to import the function which computes the ODE with the
@@ -98,7 +83,7 @@ for i = 1:M_size
     % Initial guess on theta
     phi_0.phi = phi_first_guess;
     % Solve the optimization problem
-    [phi_sol, sumsq(i)] = solve(prob, phi_0, 'Options', opts);
+    [phi_sol, sumsq(i)] = solve(prob, phi_0, 'Options', opts, 'Solver', 'fmincon');
     phi_estims(:, i) = phi_sol.phi;
 end
 
@@ -115,17 +100,17 @@ end
 
 figure(1)
 hold on
-plot(t_vec, mk(1, :, min_index), '--','LineWidth',7);
-plot(t_vec, mk(2, :, min_index), '--','LineWidth',7);
-plot(t_vec, m_est(1, :, min_index),'LineWidth',7);
-plot(t_vec, m_est(2, :, min_index),'LineWidth',7);
-plot(t_vec, y_data,'LineWidth',7);
-plot(t_vec, u_vec,'LineWidth',7);
-set(gca,"FontSize",50)
+plot(t_vec, mk(1, :, min_index), '--', 'LineWidth', 1.5);
+plot(t_vec, mk(2, :, min_index), '--', 'LineWidth', 1.5);
+plot(t_vec, m_est(1, :, min_index), 'LineWidth', 1.5);
+plot(t_vec, m_est(2, :, min_index), 'LineWidth', 1.5);
+plot(t_vec, y_data, 'LineWidth', 1.5);
+plot(t_vec, u_vec, 'LineWidth', 1.5);
+set(gca,"FontSize",8)
 legend("Active Muscle Mass", "Fatigued Muscle Mass", "Estimated Active Muscle Mass", "Estimated Fatigued Muscle Mass", "Data", "Input");
 xlabel("Time (s)")
 ylabel("Mass (kg)")
-title("Hand Grip System Identification: Test bias 8", "fontSize", 62)
+title("Hand Grip System Identification: Test 1", "fontSize", 12)
 hold off
 disp(phi_estims(:, min_index))
 disp(M(min_index))
