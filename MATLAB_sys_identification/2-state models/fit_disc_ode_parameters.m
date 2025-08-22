@@ -42,17 +42,6 @@ for i = 1:N
     end
 end
 
-% Initializing the simulation results
-mk = NaN(2, N, M_size);
-mk(:, 1, :) = zeros(2, 1, M_size);
-
-% Running simulation
-for j = 1:M_size
-    for i = 2:N
-        mk(:, i, j) = disc_diff_eq(phi_first_guess, mk(:, i-1, j), u_vec(i-1), M(j));
-    end
-end
-
 %% LEAST SQUARES ESTIMATION
 % The objective function is the sum of squares of the differences between
 % the "real" solution and the data. In order to define the objective
@@ -100,8 +89,6 @@ end
 
 figure(1)
 hold on
-plot(t_vec, mk(1, :, min_index), '--', 'LineWidth', 1.5);
-plot(t_vec, mk(2, :, min_index), '--', 'LineWidth', 1.5);
 plot(t_vec, m_est(1, :, min_index), 'LineWidth', 1.5);
 plot(t_vec, m_est(2, :, min_index), 'LineWidth', 1.5);
 plot(t_vec, y_data, 'LineWidth', 1.5);
